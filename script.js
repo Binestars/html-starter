@@ -249,6 +249,7 @@ class MemoryBank {
         this.gameStarted = true;
         this.elements.startScreen.classList.remove('active');
         this.elements.gameScreen.classList.add('active');
+        this.startBackgroundMusic();
         this.showNextDialogue();
     }
 
