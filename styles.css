@@ -38,7 +38,7 @@ body {
     height: 100%;
     display: none;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.3s ease;
 }
 
 .screen.active {
@@ -122,7 +122,7 @@ body {
     height: 100%;
     background-size: cover;
     background-position: center;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.3s ease;
     z-index: 0;
 }
 
@@ -135,7 +135,7 @@ body {
     background: black;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.3s ease;
     z-index: 1;
 }
 
@@ -280,16 +280,6 @@ body {
     opacity: 0.75;
 }
 
-/* Memory Flash Effects */
-.memory-flash {
-    animation: flashEffect 0.5s ease;
-}
-
-@keyframes flashEffect {
-    0% { filter: brightness(100%); }
-    50% { filter: brightness(200%); }
-    100% { filter: brightness(100%); }
-}
 
 /* Text Animation */
 .typing {
@@ -339,48 +329,18 @@ body {
     min-width: 120px;
 }
 
-/* Mobile optimizations */
-@media (max-width: 480px) {
-    #content-layer {
-        padding: 1rem;
-        padding-bottom: 3.5rem;
-    }
-    
-    #dialogue-box {
-        padding: 1rem;
-        margin-bottom: 1rem;
-    }
-    
-    #dialogue-text {
-        margin-bottom: 1.5rem;
-    }
-    
-    .choice-button {
-        padding: 16px 20px;
-        font-size: clamp(1.4rem, 4.5vw, 1.6rem);
-    }
-    
-    .name-input-container {
-        flex-direction: column;
-    }
-    
-    .name-input-container .choice-button {
-        width: 100%;
-    }
-}
-
 /* Character Sprites */
 #aria-sprite {
     position: absolute;
-    bottom: 36px;
+    bottom: 170px;
     left: 650px;
-    width: 750px;
-    height: 750px;
+    width: 600px;
+    height: 600px;
     background-size: contain;
     background-position: bottom left;
     background-repeat: no-repeat;
     z-index: 1;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.3s ease;
     pointer-events: none;
     transform: scale(1.2);
 }
@@ -399,111 +359,6 @@ body {
     opacity: 1;
 }
 
-@keyframes scanline {
-    0% {
-        transform: translateY(-100%);
-    }
-    100% {
-        transform: translateY(100%);
-    }
-}
-
-@keyframes flicker {
-    0% { opacity: 0.8; }
-    25% { opacity: 0.9; }
-    50% { opacity: 0.7; }
-    75% { opacity: 1; }
-    100% { opacity: 0.8; }
-}
-
-.cyber-loading {
-    font-family: var(--font-main);
-    color: var(--neon-blue);
-    text-shadow: 0 0 5px var(--neon-blue);
-    margin: 2rem 0;
-    position: relative;
-    overflow: hidden;
-}
-
-.cyber-loading::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background: rgba(0, 243, 255, 0.2);
-    animation: scanline 2s linear infinite;
-}
-
-.cyber-loading .status {
-    font-size: 1.4rem;
-    margin-bottom: 1rem;
-    animation: flicker 0.5s infinite;
-}
-
-.cyber-loading .progress {
-    width: 100%;
-    height: 2px;
-    background: rgba(0, 243, 255, 0.1);
-    position: relative;
-    margin: 1rem 0;
-}
-
-.cyber-loading .progress::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 50%;
-    background: var(--neon-blue);
-    box-shadow: 0 0 10px var(--neon-blue);
-    animation: progressMove 6s linear forwards;
-}
-
-.cyber-loading .details {
-    font-size: 1rem;
-    opacity: 0;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
-
-.cyber-loading .details:nth-child(3) {
-    animation: fadeIn 0.5s forwards 1.5s;
-}
-
-.cyber-loading .details:nth-child(4) {
-    animation: fadeIn 0.5s forwards 3s;
-}
-
-.cyber-loading .details:nth-child(5) {
-    animation: fadeIn 0.5s forwards 4.5s;
-}
-
-.cyber-loading .details:nth-child(6) {
-    animation: fadeIn 0.5s forwards 6s;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 0.7;
-        transform: translateY(0);
-    }
-}
-
-@keyframes progressMove {
-    from {
-        width: 0%;
-    }
-    to {
-        width: 100%;
-    }
-}
 
 /* Timer Animation */
 .choice-timer {
@@ -574,320 +429,6 @@ body {
     min-width: 140px;
 }
 
-@media (max-width: 480px) {
-    .game-timer {
-        top: 1rem;
-        font-size: 2.4rem;
-        padding: 0.5rem 1.5rem;
-    }
-    
-    #dialogue-text {
-        font-size: clamp(1.6rem, 5vw, 2rem);
-        line-height: 1.4;
-    }
-    
-    .choice-button {
-        padding: 16px 20px;
-        font-size: clamp(1.4rem, 4.5vw, 1.6rem);
-    }
-}
-
-/* Brain Container */
-.brain-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    pointer-events: none;
-    z-index: 1;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease;
-}
-
-.brain-container.visible {
-    opacity: 1;
-    visibility: visible;
-}
-
-.brain-container .container {
-    position: relative;
-    width: 480px;
-    height: 480px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.brain-container .brain {
-    display: none;
-}
-
-.brain-container .neural-point {
-    position: absolute;
-    transform: rotate(45deg);
-    background-color: rgba(255, 30, 30, 0.9);
-    box-shadow: 0 0 10px rgba(255, 30, 30, 0.8), inset 0 0 3px rgba(255, 255, 255, 0.8);
-    animation: nodeFlicker 4s infinite;
-    transition: all 0.5s ease;
-    z-index: 2;
-}
-
-.brain-container .neural-point::before {
-    content: '';
-    position: absolute;
-    top: -4px;
-    left: -4px;
-    right: -4px;
-    bottom: -4px;
-    transform: rotate(0deg);
-    border: 1px solid rgba(255, 30, 30, 0.6);
-    opacity: 0.6;
-}
-
-.brain-container .connecting-line {
-    position: absolute;
-    height: 1px;
-    transform-origin: left center;
-    background-color: rgba(255, 30, 30, 0.5);
-    opacity: 0;
-    animation: lineConnect 4s infinite;
-    z-index: 1;
-}
-
-/* Circuit pattern for lines */
-.brain-container .connecting-line::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(to right, 
-        transparent, 
-        rgba(255, 30, 30, 0.2) 25%, 
-        transparent 25%,
-        transparent 50%,
-        rgba(255, 30, 30, 0.2) 50%,
-        transparent 50%,
-        transparent 75%,
-        rgba(255, 30, 30, 0.2) 75%,
-        transparent);
-    background-size: 40px 1px;
-}
-
-/* Data pulses on lines */
-.brain-container .connecting-line::after {
-    content: '';
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background-color: rgba(255, 30, 30, 0.9);
-    top: -1.5px;
-    animation: dataTransfer 3s infinite linear;
-    box-shadow: 0 0 4px rgba(255, 30, 30, 0.8);
-}
-
-.brain-container .neural-point.blue {
-    background-color: rgba(30, 120, 255, 0.9);
-    box-shadow: 0 0 10px rgba(30, 120, 255, 0.8), inset 0 0 3px rgba(255, 255, 255, 0.8);
-}
-
-.brain-container .neural-point.blue::before {
-    border-color: rgba(30, 120, 255, 0.6);
-}
-
-.brain-container .connecting-line.blue {
-    background-color: rgba(30, 120, 255, 0.5);
-}
-
-.brain-container .connecting-line.blue::before {
-    background: linear-gradient(to right, 
-        transparent, 
-        rgba(30, 120, 255, 0.2) 25%, 
-        transparent 25%,
-        transparent 50%,
-        rgba(30, 120, 255, 0.2) 50%,
-        transparent 50%,
-        transparent 75%,
-        rgba(30, 120, 255, 0.2) 75%,
-        transparent);
-    background-size: 40px 1px;
-}
-
-.brain-container .connecting-line.blue::after {
-    background-color: rgba(30, 120, 255, 0.9);
-    box-shadow: 0 0 4px rgba(30, 120, 255, 0.8);
-}
-
-/* Circuit nodes at intersections */
-.brain-container .circuit-node {
-    position: absolute;
-    transform: rotate(45deg);
-    background-color: rgba(255, 30, 30, 0.8);
-    box-shadow: 0 0 5px rgba(255, 30, 30, 0.8);
-    animation: nodeGlow 4s infinite alternate;
-    z-index: 3;
-}
-
-.brain-container .circuit-node.blue {
-    background-color: rgba(30, 120, 255, 0.8);
-    box-shadow: 0 0 5px rgba(30, 120, 255, 0.8);
-}
-
-@keyframes nodeFlicker {
-    0%, 100% {
-        opacity: 0.8;
-        transform: rotate(45deg) scale(0.9);
-    }
-    10% {
-        opacity: 0.9;
-        transform: rotate(45deg) scale(0.95);
-    }
-    15% {
-        opacity: 0.7;
-        transform: rotate(45deg) scale(0.85);
-    }
-    50% {
-        opacity: 1;
-        transform: rotate(45deg) scale(1);
-    }
-    52% {
-        opacity: 0.8;
-        transform: rotate(45deg) scale(0.9);
-    }
-    54% {
-        opacity: 1;
-        transform: rotate(45deg) scale(1);
-    }
-    90% {
-        opacity: 0.9;
-        transform: rotate(45deg) scale(0.95);
-    }
-    95% {
-        opacity: 0.7;
-        transform: rotate(45deg) scale(0.85);
-    }
-}
-
-@keyframes lineConnect {
-    0%, 10%, 90%, 100% {
-        opacity: 0.3;
-    }
-    30%, 70% {
-        opacity: 0.8;
-    }
-}
-
-@keyframes dataTransfer {
-    0% {
-        left: 0;
-        opacity: 0.9;
-    }
-    20% {
-        opacity: 0.9;
-    }
-    90% {
-        opacity: 0.9;
-    }
-    100% {
-        left: calc(100% - 4px);
-        opacity: 0;
-    }
-}
-
-@keyframes nodeGlow {
-    0%, 100% {
-        opacity: 0.7;
-        box-shadow: 0 0 4px rgba(255, 30, 30, 0.7);
-    }
-    50% {
-        opacity: 1;
-        box-shadow: 0 0 8px rgba(255, 30, 30, 1);
-    }
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 1024px) {
-    .brain-container .container {
-        width: 400px;
-        height: 400px;
-    }
-}
-
-@media (max-width: 768px) {
-    .brain-container .container {
-        width: 400px;
-        height: 400px;
-        left: -150px;
-        bottom: -80px;
-    }
-}
-
-@media (max-width: 480px) {
-    .brain-container {
-        align-items: flex-start;
-        padding-top: 20%;
-    }
-
-    .brain-container .container {
-        width: 300px;
-        height: 300px;
-        left: -100px;
-        transform: translateX(-10%);
-    }
-    
-    .brain-container .neural-point {
-        transform: scale(0.8);
-    }
-    
-    .brain-container .connecting-line {
-        height: 0.5px;
-    }
-}
-
-@media (max-width: 360px) {
-    .brain-container .container {
-        width: 208px;
-        height: 208px;
-        transform: translateX(-8%);
-    }
-}
-
-@media (max-width: 768px) {
-    #dialogue-system {
-        margin-left: 100px;
-    }
-    
-    #aria-sprite {
-        width: 400px;
-        height: 400px;
-        left: -150px;
-        bottom: -80px;
-    }
-}
-
-@media (max-width: 480px) {
-    #dialogue-system {
-        margin-left: 0;
-        max-width: 100%;
-    }
-    
-    #aria-sprite {
-        width: 300px;
-        height: 300px;
-        left: -100px;
-        bottom: -60px;
-    }
-    
-    #content-layer {
-        padding: 1rem;
-        padding-bottom: 3.5rem;
-    }
-}
 
 .speaker-name {
     color: var(--neon-pink);
