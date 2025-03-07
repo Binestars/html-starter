@@ -173,7 +173,7 @@ body {
 }
 
 #dialogue-box {
-    background: rgba(0, 0, 0, 0.93);
+    background: rgba(0, 0, 0, 0.97);
     border: 2px solid var(--neon-blue);
     padding: clamp(0.9rem, 2.8vw, 1.3rem);
     border-radius: 4px;
@@ -188,7 +188,7 @@ body {
 
 #dialogue-text {
     font-size: var(--dialogue-size);
-    margin-bottom: 1rem;
+    margin-bottom: 0;
     line-height: 1.6;
 }
 
@@ -198,42 +198,42 @@ body {
 
 /* Choices Container */
 #choices-container {
-    display: grid;
+    display: none; /* Hide by default */
     grid-template-columns: 1fr;
     gap: clamp(0.6rem, 1.5vw, 1rem);
     width: 100%;
-    margin-top: 0.8rem;
-    position: relative;
-    z-index: 3;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0, 243, 255, 0.3);
 }
 
-#choices-container:empty {
-    display: none;
-    margin: 0;
+/* Only show choices container when it has content */
+#choices-container:not(:empty) {
+    display: grid;
 }
 
 /* Responsive grid layout */
 @media (min-width: 480px) {
-    #choices-container {
+    #choices-container:not(:empty) {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
 /* Ensure single column on very small screens */
 @media (max-width: 479px) {
-    #choices-container {
+    #choices-container:not(:empty) {
         grid-template-columns: 1fr;
     }
 }
 
 .choice-button {
     width: 100%;
-    padding: clamp(1rem, 2.5vw, 1.3rem);
+    padding: clamp(0.8rem, 2vw, 1rem);
     font-size: var(--choice-size);
     white-space: normal;
     height: auto;
     min-height: 44px;
-    background: rgb(0, 12, 24);
+    background: rgba(0, 243, 255, 0.1);
     border: 1px solid var(--neon-blue);
     border-radius: 4px;
     color: var(--text-color);
@@ -247,26 +247,26 @@ body {
 }
 
 .choice-button:hover {
-    background: rgb(0, 24, 48);
+    background: rgba(0, 243, 255, 0.2);
     border-color: var(--neon-pink);
     box-shadow: 0 0 15px rgba(255, 0, 247, 0.3);
     transform: translateY(-2px);
 }
 
 .choice-button.selected {
-    background: rgb(0, 36, 72);
+    background: rgba(0, 243, 255, 0.3);
     border-color: var(--neon-blue);
     box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
 }
 
 .choice-button.done-button {
     margin-top: 1rem;
-    background: rgb(24, 0, 48);
+    background: rgba(255, 0, 247, 0.1);
     border-color: var(--neon-pink);
 }
 
 .choice-button.done-button:hover {
-    background: rgb(36, 0, 72);
+    background: rgba(255, 0, 247, 0.2);
     border-color: var(--neon-pink);
     box-shadow: 0 0 15px rgba(255, 0, 247, 0.5);
 }
