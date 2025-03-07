@@ -113,10 +113,30 @@ class MemoryBank {
             'black.png'
         ];
 
+        const koviEmotions = [
+            'default',
+            'cringe',
+            'a',
+            'shock',
+            'smile',
+            'sus',
+            'up',
+            'excited',
+            'neutral'
+        ];
+
+        // Preload backgrounds
         backgrounds.forEach(bg => {
             const img = new Image();
             img.src = `assets/${bg}`;
             this.imageCache.set(bg, img);
+        });
+
+        // Preload Kovi emotion sprites
+        koviEmotions.forEach(emotion => {
+            const img = new Image();
+            img.src = `assets/kovi_${emotion}.png`;
+            this.imageCache.set(`kovi_${emotion}`, img);
         });
     }
 
@@ -378,6 +398,8 @@ class MemoryBank {
         if (dialogue.aria) {
             this.elements.aria.style.backgroundImage = `url('assets/${dialogue.aria}')`;
             this.elements.aria.style.display = 'block';
+        } else if (dialogue.speaker === 'KOVI' || (dialogue.isNarration && this.currentScene !== 'intro')) {
+            this.setKoviSprite(dialogue.emotion);
         } else {
             this.elements.aria.style.display = 'none';
         }
@@ -389,8 +411,7 @@ class MemoryBank {
             
             // Show KOVI's sprite if he's the speaker
             if (dialogue.speaker === 'KOVI') {
-                this.elements.aria.style.backgroundImage = `url('assets/kovi.png')`;
-                this.elements.aria.style.display = 'block';
+                this.setKoviSprite(dialogue.emotion);
             } else {
                 this.elements.aria.style.display = 'none';
             }
@@ -439,8 +460,7 @@ class MemoryBank {
 
         // Show dialogue
         if ((dialogue.speaker === 'KOVI' || dialogue.isNarration) && this.currentScene !== 'intro') {
-            this.elements.aria.style.backgroundImage = `url('assets/kovi.png')`;
-            this.elements.aria.style.display = 'block';
+            this.setKoviSprite(dialogue.emotion);
         } else {
             this.elements.aria.style.display = 'none';
         }
@@ -487,8 +507,9 @@ class MemoryBank {
         
         // Never show KOVI in intro scene
         if (this.currentScene !== 'intro') {
-            this.elements.aria.style.backgroundImage = `url('assets/kovi.png')`;
-            this.elements.aria.style.display = 'block';
+            const currentScene = gameData.scenes[this.currentScene];
+            const dialogue = currentScene.dialogue[this.dialogueIndex];
+            this.setKoviSprite(dialogue.emotion);
         } else {
             this.elements.aria.style.display = 'none';
         }
@@ -720,6 +741,8 @@ class MemoryBank {
         if (dialogue.aria) {
             this.elements.aria.style.backgroundImage = `url('assets/${dialogue.aria}')`;
             this.elements.aria.style.display = 'block';
+        } else if (dialogue.speaker === 'KOVI' || (dialogue.isNarration && this.currentScene !== 'intro')) {
+            this.setKoviSprite(dialogue.emotion);
         } else {
             this.elements.aria.style.display = 'none';
         }
@@ -756,6 +779,23 @@ class MemoryBank {
         } else {
             this.elements.background.style.backgroundImage = newBg;
             this.elements.background.style.opacity = '1';
+        }
+    }
+
+    setKoviSprite(emotion = 'default') {
+        const cachedImg = this.imageCache.get(`kovi_${emotion}`);
+        if (cachedImg && cachedImg.complete) {
+            this.elements.aria.style.backgroundImage = `url('assets/kovi_${emotion}.png')`;
+            this.elements.aria.style.display = 'block';
+        } else {
+            // Fallback to loading if not cached
+            const img = new Image();
+            img.onload = () => {
+                this.imageCache.set(`kovi_${emotion}`, img);
+                this.elements.aria.style.backgroundImage = `url('assets/kovi_${emotion}.png')`;
+                this.elements.aria.style.display = 'block';
+            };
+            img.src = `assets/kovi_${emotion}.png`;
         }
     }
 }
