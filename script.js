@@ -12,6 +12,7 @@ class MemoryBank {
         this.isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
         this.isMusicPlaying = false;
         this.currentVoice = null;
+        this.imageCache = new Map();
         
         // Create background music
         this.backgroundMusic = new Audio('audio/music1.mp3');
@@ -31,7 +32,8 @@ class MemoryBank {
             aria: document.getElementById('aria-sprite'),
             backButton: document.getElementById('back-button'),
             skipHint: document.createElement('div'),
-            musicButton: document.createElement('button')
+            musicButton: document.createElement('button'),
+            statusDisplay: document.getElementById('status-display')
         };
 
         // Create skip hint element
@@ -91,6 +93,31 @@ class MemoryBank {
         this.elements.gameScreen.addEventListener('click', () => this.handleAction());
         this.elements.backButton.addEventListener('click', () => this.goBack());
         this.elements.musicButton.addEventListener('click', () => this.toggleMusic());
+
+        // Preload all background images
+        this.preloadBackgrounds();
+    }
+
+    preloadBackgrounds() {
+        const backgrounds = [
+            'sterile.png',
+            'office.png',
+            'freelancer.png',
+            'boss.png',
+            'broke.png',
+            'single.png',
+            'notsingle.png',
+            '1.png',
+            '2.png',
+            'social.png',
+            'black.png'
+        ];
+
+        backgrounds.forEach(bg => {
+            const img = new Image();
+            img.src = `assets/${bg}`;
+            this.imageCache.set(bg, img);
+        });
     }
 
     async transitionToScene(nextScene, useTransition = true) {
@@ -319,13 +346,10 @@ class MemoryBank {
                 backgroundPath = background(this.playerChoices);
             }
             
-            console.log('Attempting to set background:', backgroundPath, 'isTransitioning:', this.isTransitioning);
-            
             // Skip transition if the background isn't actually changing
             const currentBg = this.elements.background.style.backgroundImage;
             const newBg = `url('assets/${backgroundPath}')`;
             if (currentBg === newBg) {
-                console.log('Skipping - same background');
                 return;
             }
             
@@ -335,52 +359,19 @@ class MemoryBank {
                 this.isTransitioning = false;
             }
             
-            // Check if the background image exists
-            const img = new Image();
-            img.onerror = () => {
-                // If image fails to load (like black.png), set black background
-                if (dialogue.transition) {
-                    this.elements.transitionOverlay.classList.add('dimming');
-                    this.isTransitioning = true;
-                    
-                    setTimeout(() => {
-                        this.elements.background.style.backgroundImage = 'none';
-                        this.elements.background.style.backgroundColor = '#000000';
-                        this.elements.background.style.opacity = '1';
-                        console.log('Set black background after transition');
-                        this.elements.transitionOverlay.classList.remove('dimming');
-                        this.isTransitioning = false;
-                    }, 800);
-                } else {
-                    this.elements.background.style.backgroundImage = 'none';
-                    this.elements.background.style.backgroundColor = '#000000';
-                    this.elements.background.style.opacity = '1';
-                }
-            };
-            
-            // Always preload the image first
-            img.src = `assets/${backgroundPath}`;
-            
-            // Set a loading state while the image loads
-            this.elements.background.style.opacity = '0.5';
-            img.onload = () => {
-                if (dialogue.transition) {
-                    this.elements.transitionOverlay.classList.add('dimming');
-                    this.isTransitioning = true;
-                    
-                    setTimeout(() => {
-                        this.elements.background.style.backgroundImage = newBg;
-                        this.elements.background.style.opacity = '1';
-                        console.log('Set background after transition:', backgroundPath);
-                        this.elements.transitionOverlay.classList.remove('dimming');
-                        this.isTransitioning = false;
-                    }, 800);
-                } else {
-                    this.elements.background.style.backgroundImage = newBg;
-                    this.elements.background.style.opacity = '1';
-                    console.log('Set background immediately after preload:', backgroundPath);
-                }
-            };
+            // Use cached image if available
+            const cachedImg = this.imageCache.get(backgroundPath);
+            if (cachedImg && cachedImg.complete) {
+                this.setBackgroundWithTransition(backgroundPath, dialogue.transition);
+            } else {
+                // Fallback to loading if not cached
+                const img = new Image();
+                img.onload = () => {
+                    this.imageCache.set(backgroundPath, img);
+                    this.setBackgroundWithTransition(backgroundPath, dialogue.transition);
+                };
+                img.src = `assets/${backgroundPath}`;
+            }
         }
 
         // Handle ARIA's sprite
@@ -746,6 +737,25 @@ class MemoryBank {
             this.showChoices(dialogue.choices, dialogue.storeAs);
         } else {
             this.elements.choices.innerHTML = '';
+        }
+    }
+
+    setBackgroundWithTransition(backgroundPath, shouldTransition) {
+        const newBg = `url('assets/${backgroundPath}')`;
+        
+        if (shouldTransition) {
+            this.elements.transitionOverlay.classList.add('dimming');
+            this.isTransitioning = true;
+            
+            setTimeout(() => {
+                this.elements.background.style.backgroundImage = newBg;
+                this.elements.background.style.opacity = '1';
+                this.elements.transitionOverlay.classList.remove('dimming');
+                this.isTransitioning = false;
+            }, 300); // Reduced from 800ms to 300ms for faster transitions
+        } else {
+            this.elements.background.style.backgroundImage = newBg;
+            this.elements.background.style.opacity = '1';
         }
     }
 }
