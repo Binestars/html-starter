@@ -445,7 +445,9 @@ const gameData = {
                 {
                     text: "Critical alert! System failure imminent... oh, wait",
                     speaker: 'FINEBOT',
-                    background: 'sterile.png'
+                    background: 'error.png',
+                    transition: true,
+                    emotion: 'error'
                 },
                 {
                     text: "Sorry, that was last week's patient. WE DID IT! Your consciousness has officially decided that living is preferable to not living!",
