@@ -22,7 +22,8 @@ const gameData = {
                     text: "Oh good, you're awake. I was beginning to think we'd wasted electricity on your revival. Welcome back to being not dead. For now.",
                     speaker: 'KOVI',
                     background: 'sterile.png',
-                    transition: true
+                    transition: true,
+                    emotion: 'shock'
                 },
                 {
                     text: "I'm KOVI. I run this place where we undie people and fix their finances.",
@@ -37,13 +38,15 @@ const gameData = {
                 {
                     text: "Your brain appears to have misplaced all financial data during transfer. This is unfortunate. For you specifically, not for me. I'm fine.",
                     speaker: 'KOVI',
-                    background: 'sterile.png'
+                    background: 'sterile.png',
+                    emotion: 'cringe'
                 },
                 {
                     text: "That timer? It's counting down to your permanent death if we don't recover your memories.",
                     speaker: 'KOVI',
                     background: 'black.png',
-                    transition: true
+                    transition: true,
+                    emotion: 'up'
                 },
                 {
                     text: "No pressure. Actually, that's incorrect - there's significant pressure.",
@@ -53,7 +56,8 @@ const gameData = {
                 {
                     text: "Look, it's simple -  I ask questions, you answer, your brain reconnects, you continue existing. I'm not seeing any downsides.",
                     speaker: 'KOVI',
-                    background: 'sterile.png'
+                    background: 'sterile.png',
+                    emotion: 'a'
                 },
                 {
                     text: "Lets start with basics.",
@@ -74,10 +78,12 @@ const gameData = {
                 {
                     text: "Where did you work before your temporary death episode?",
                     speaker: 'KOVI',
-                    background: 'sterile.png'
+                    background: 'sterile.png',
+                    emotion: 'sus'
                 },
                 {
                     text: "Your occupation?",
+                    emotion: 'sus',
                     background: 'sterile.png',
                     choices: [
                         {
@@ -136,15 +142,18 @@ const gameData = {
                         };
                         return backgrounds[choices.employment];
                     },
-                    transition: true
+                    transition: true,
+                    emotion: 'shock'
                 },
                 {
                     text: "Are you single? The protocol demands I ask. I'm as uncomfortable as you are.",
                     speaker: 'KOVI',
-                    background: 'sterile.png'
+                    background: 'sterile.png',
+                    emotion: 'cringe'
                 },
                 {
                     text: "Relationship status?",
+                    emotion: 'cringe',
                     background: 'sterile.png',
                     choices: [
                         {
@@ -220,10 +229,12 @@ const gameData = {
                 {
                     text: "Now your banking geography. Confined to one sad little country, or plotting global economic domination?",
                     speaker: 'KOVI',
-                    background: 'sterile.png'
+                    background: 'sterile.png',
+                    emotion: 'sus'
                 },
                 {
                     text: "Bank accounts - domestic or international?",
+                    emotion: 'sus',
                     background: 'sterile.png',
                     choices: [
                         {
@@ -306,21 +317,21 @@ const gameData = {
                     text: "Let's scan your wealth-building approach - assuming your plan isn't just 'win the lottery eventually.'",
                     speaker: 'KOVI',
                     background: 'invest.png',
-                    transition: true
+                    transition: true,
                 },
                 {
                     text: "Investment strategy?",
                     background: 'invest.png',
                     choices: [
                         {
-                            text: 'Just retirement accounts/401k',
+                            text: 'Passive investing (401k/retirement/index funds)',
                             response: "Retirement-only investor! You've perfected the financial strategy of 'set it, forget it, and panic about it at 3 AM when you're 64.",                        },
                         {
-                            text: 'Beyond basics - stocks, real estate, etc.',
+                            text: 'Active investing (stocks/real estate)',
                             response: "Self-directed investor! You've mastered that special feeling of being both smug and terrified every time you invest in something.",
                         },
                         {
-                            text: 'Investing? What’s that?',
+                            text: 'Investing? What\'s that?',
                             response: "No investing at all? Living completely in the present! Future You is sending a telepathic eye-roll, but Present You is having a great time.",
                         }
                     ],
@@ -331,11 +342,12 @@ const gameData = {
                         const responses = {
                             'Relying only on retirement accounts': "Retirement-only investor! You've perfected the financial strategy of 'set it, forget it, and panic about it at 3 AM when you're 64.",
                             'Casual investor (real estate or brokerage)': "Self-directed investor! You've mastered that special feeling of being both smug and terrified every time you invest in something.",
-                            'Investing? What’s that?': "No investing at all? Living completely in the present! Future You is sending a telepathic eye-roll, but Present You is having a great time."
+                            'Investing? What\'s that?': "No investing at all? Living completely in the present! Future You is sending a telepathic eye-roll, but Present You is having a great time."
                         };
                         return responses[choices.investmentStyle];
                     },
                     speaker: 'KOVI',
+                    emotion: 'shock',
                     background: 'invest.png'
                 },
                 {
@@ -346,11 +358,13 @@ const gameData = {
                 {
                     text: "Wait - your brain insists we check your friendship patterns too. Fine, fine!",
                     speaker: 'KOVI',
-                    background: 'sterile.png'
+                    background: 'sterile.png',
+                    emotion: 'sus'
                 },
                 {
                     text: "How often do you hang out with friends?",
                     background: 'social.png',
+                    emotion: 'sus',
                     choices: [
                         {
                             text: 'Very often',
@@ -383,6 +397,7 @@ const gameData = {
                         return responses[choices.socialFrequency];
                     },
                     speaker: 'KOVI',
+                    emotion: 'smile',
                     background: 'social.png'
                 },
                 {
@@ -441,7 +456,8 @@ const gameData = {
                 {
                     text: "Now we just need your email to finish registration.",
                     speaker: 'KOVI',
-                    background: 'sterile.png'
+                    background: 'sterile.png',
+                    emotion: 'smile'
                 },
                 {
                     text: "Enter your email to join the waitlist",
@@ -453,7 +469,8 @@ const gameData = {
                 {
                     text: "Email verified! Fun fact - I wasn't actually talking before. Your dying consciousness was translating repair protocols into this 'KOVI' entity while your brain rebuilt itself.",
                     speaker: 'KOVI',
-                    background: 'sterile.png'
+                    background: 'sterile.png',
+                    emotion: 'shock'
                 },
                 {
                     text: "Anyway, congrats on the whole not-being-dead thing! In the future, please die more conveniently. I had to cancel my virtual poker night to bring you back, and those byte-sized chips don't win themselves.",
