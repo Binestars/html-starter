@@ -121,8 +121,7 @@ class MemoryBank {
             'smile',
             'sus',
             'up',
-            'error',
-            'neutral'
+            'error'
         ];
 
         // Preload backgrounds
