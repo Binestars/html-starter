@@ -113,7 +113,7 @@ class MemoryBank {
             'black.png'
         ];
 
-        const koviEmotions = [
+        const FINEBOTEmotions = [
             'default',
             'cringe',
             'a',
@@ -132,11 +132,11 @@ class MemoryBank {
             this.imageCache.set(bg, img);
         });
 
-        // Preload Kovi emotion sprites
-        koviEmotions.forEach(emotion => {
+        // Preload FINEBOT emotion sprites
+        FINEBOTEmotions.forEach(emotion => {
             const img = new Image();
-            img.src = `assets/kovi_${emotion}.png`;
-            this.imageCache.set(`kovi_${emotion}`, img);
+            img.src = `assets/FINEBOT_${emotion}.png`;
+            this.imageCache.set(`FINEBOT_${emotion}`, img);
         });
     }
 
@@ -208,7 +208,7 @@ class MemoryBank {
             if (currentDialogue.choices && typeof currentDialogue.text === 'function') {
                 // Show the response text
                 const responseText = currentDialogue.text(this.playerChoices);
-                this.elements.speaker.textContent = 'KOVI';
+                this.elements.speaker.textContent = 'FINEBOT';
                 this.typeText(responseText);
                 
                 // Move to next dialogue after response is shown and clicked
@@ -398,8 +398,8 @@ class MemoryBank {
         if (dialogue.aria) {
             this.elements.aria.style.backgroundImage = `url('assets/${dialogue.aria}')`;
             this.elements.aria.style.display = 'block';
-        } else if (dialogue.speaker === 'KOVI' || (dialogue.isNarration && this.currentScene !== 'intro')) {
-            this.setKoviSprite(dialogue.emotion);
+        } else if (dialogue.speaker === 'FINEBOT' || (dialogue.isNarration && this.currentScene !== 'intro')) {
+            this.setFINEBOTSprite(dialogue.emotion);
         } else {
             this.elements.aria.style.display = 'none';
         }
@@ -409,9 +409,9 @@ class MemoryBank {
             this.elements.speaker.textContent = dialogue.speaker;
             this.elements.dialogueText.textContent = dialogue.text;
             
-            // Show KOVI's sprite if he's the speaker
-            if (dialogue.speaker === 'KOVI') {
-                this.setKoviSprite(dialogue.emotion);
+            // Show FINEBOT's sprite if he's the speaker
+            if (dialogue.speaker === 'FINEBOT') {
+                this.setFINEBOTSprite(dialogue.emotion);
             } else {
                 this.elements.aria.style.display = 'none';
             }
@@ -459,8 +459,8 @@ class MemoryBank {
         this.elements.choices.innerHTML = '';
 
         // Show dialogue
-        if ((dialogue.speaker === 'KOVI' || dialogue.isNarration) && this.currentScene !== 'intro') {
-            this.setKoviSprite(dialogue.emotion);
+        if ((dialogue.speaker === 'FINEBOT' || dialogue.isNarration) && this.currentScene !== 'intro') {
+            this.setFINEBOTSprite(dialogue.emotion);
         } else {
             this.elements.aria.style.display = 'none';
         }
@@ -505,11 +505,11 @@ class MemoryBank {
         const currentScene = gameData.scenes[this.currentScene];
         const dialogue = currentScene.dialogue[this.dialogueIndex];
         
-        // Never show KOVI in intro scene
+        // Never show FINEBOT in intro scene
         if (this.currentScene !== 'intro') {
             const currentScene = gameData.scenes[this.currentScene];
             const dialogue = currentScene.dialogue[this.dialogueIndex];
-            this.setKoviSprite(dialogue.emotion);
+            this.setFINEBOTSprite(dialogue.emotion);
         } else {
             this.elements.aria.style.display = 'none';
         }
@@ -547,7 +547,7 @@ class MemoryBank {
                     const nextDialogue = currentScene.dialogue[this.dialogueIndex + 1];
                     if (nextDialogue && typeof nextDialogue.text === 'function') {
                         const response = nextDialogue.text(this.playerChoices);
-                        this.elements.speaker.textContent = 'KOVI';
+                        this.elements.speaker.textContent = 'FINEBOT';
                         this.elements.dialogueText.textContent = '';
                         this.typeText(response);
                         
@@ -616,7 +616,7 @@ class MemoryBank {
                     this.elements.choices.innerHTML = '';
                     
                     if (choice.response) {
-                        this.elements.speaker.textContent = 'KOVI';
+                        this.elements.speaker.textContent = 'FINEBOT';
                         this.typeText(choice.response);
                         
                         const handleResponseClick = () => {
@@ -643,18 +643,18 @@ class MemoryBank {
             const isNarration = text.includes('<em>');
             const cleanText = isNarration ? text.replace('<em>', '').replace('</em>', '') : text;
             
-            // Add KOVI's name if he's the speaker
-            const isKovi = this.elements.speaker.textContent === 'KOVI';
-            const koviPrefix = isKovi ? '<span class="speaker-name">KOVI</span>' : '';
+            // Add FINEBOT's name if he's the speaker
+            const isFINEBOT = this.elements.speaker.textContent === 'FINEBOT';
+            const FINEBOTPrefix = isFINEBOT ? '<span class="speaker-name">FINEBOT</span>' : '';
             
             // Create a temporary div to parse HTML
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = cleanText;
             const textContent = tempDiv.textContent;
             
-            // Add KOVI's name before starting the typing animation
-            if (isKovi) {
-                this.elements.dialogueText.innerHTML = koviPrefix;
+            // Add FINEBOT's name before starting the typing animation
+            if (isFINEBOT) {
+                this.elements.dialogueText.innerHTML = FINEBOTPrefix;
             }
             
             const type = () => {
@@ -667,7 +667,7 @@ class MemoryBank {
                     const displayText = textContent.slice(0, index + 1);
                     this.elements.dialogueText.innerHTML = isNarration ? 
                         `<em>${displayText}</em>` : 
-                        `${koviPrefix}${displayText}`;
+                        `${FINEBOTPrefix}${displayText}`;
                     
                     index++;
                     setTimeout(type, 13); // Reduced delay for faster typing speed
@@ -698,16 +698,16 @@ class MemoryBank {
         tempDiv.innerHTML = text;
         let displayText = tempDiv.innerHTML;
         
-        // Add KOVI's name if he's the speaker
-        const isKovi = this.elements.speaker.textContent === 'KOVI';
-        const koviPrefix = isKovi ? '<span class="speaker-name">KOVI</span>' : '';
+        // Add FINEBOT's name if he's the speaker
+        const isFINEBOT = this.elements.speaker.textContent === 'FINEBOT';
+        const FINEBOTPrefix = isFINEBOT ? '<span class="speaker-name">FINEBOT</span>' : '';
         
         // Handle narration text
         if (currentDialogue.isNarration || text.includes('<em>')) {
             displayText = displayText.includes('<em>') ? displayText : `<em>${displayText}</em>`;
         }
         
-        this.elements.dialogueText.innerHTML = `${koviPrefix}${displayText}`.replace('[name]', this.playerName);
+        this.elements.dialogueText.innerHTML = `${FINEBOTPrefix}${displayText}`.replace('[name]', this.playerName);
     }
 
     goBack() {
@@ -741,8 +741,8 @@ class MemoryBank {
         if (dialogue.aria) {
             this.elements.aria.style.backgroundImage = `url('assets/${dialogue.aria}')`;
             this.elements.aria.style.display = 'block';
-        } else if (dialogue.speaker === 'KOVI' || (dialogue.isNarration && this.currentScene !== 'intro')) {
-            this.setKoviSprite(dialogue.emotion);
+        } else if (dialogue.speaker === 'FINEBOT' || (dialogue.isNarration && this.currentScene !== 'intro')) {
+            this.setFINEBOTSprite(dialogue.emotion);
         } else {
             this.elements.aria.style.display = 'none';
         }
@@ -782,20 +782,20 @@ class MemoryBank {
         }
     }
 
-    setKoviSprite(emotion = 'default') {
-        const cachedImg = this.imageCache.get(`kovi_${emotion}`);
+    setFINEBOTSprite(emotion = 'default') {
+        const cachedImg = this.imageCache.get(`FINEBOT_${emotion}`);
         if (cachedImg && cachedImg.complete) {
-            this.elements.aria.style.backgroundImage = `url('assets/kovi_${emotion}.png')`;
+            this.elements.aria.style.backgroundImage = `url('assets/FINEBOT_${emotion}.png')`;
             this.elements.aria.style.display = 'block';
         } else {
             // Fallback to loading if not cached
             const img = new Image();
             img.onload = () => {
-                this.imageCache.set(`kovi_${emotion}`, img);
-                this.elements.aria.style.backgroundImage = `url('assets/kovi_${emotion}.png')`;
+                this.imageCache.set(`FINEBOT_${emotion}`, img);
+                this.elements.aria.style.backgroundImage = `url('assets/FINEBOT_${emotion}.png')`;
                 this.elements.aria.style.display = 'block';
             };
-            img.src = `assets/kovi_${emotion}.png`;
+            img.src = `assets/FINEBOT_${emotion}.png`;
         }
     }
 }
