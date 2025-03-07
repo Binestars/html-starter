@@ -121,7 +121,7 @@ class MemoryBank {
             'smile',
             'sus',
             'up',
-            'excited',
+            'error',
             'neutral'
         ];
 
