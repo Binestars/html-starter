@@ -11,17 +11,12 @@ class MemoryBank {
         this.timer = null;
         this.isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
         this.isMusicPlaying = false;
-        this.brainPoints = [];
-        this.currentBrainPhase = 0;
         this.currentVoice = null;
         
         // Create background music
         this.backgroundMusic = new Audio('audio/music1.mp3');
         this.backgroundMusic.loop = true;
         this.backgroundMusic.volume = 0.011;
-        
-        // Initialize brain visualization
-        this.initBrainVisualization();
         
         // Cache DOM elements
         this.elements = {
@@ -133,18 +128,6 @@ class MemoryBank {
             dialogue = currentScene.dialogue(this.playerChoices)[this.dialogueIndex];
         } else {
             dialogue = currentScene.dialogue[this.dialogueIndex];
-        }
-
-        // Prevent skipping during the cyber-loading sequence
-        if (this.currentScene === 'finalMemory' && 
-            dialogue && 
-            dialogue.text.includes('cyber-loading')) {
-            return; // Don't allow any action during these sequences
-        }
-
-        // Prevent skipping if there's a voice clip and text is still typing
-        if (dialogue && dialogue.voice && this.isTyping) {
-            return; // Don't allow skipping during voiced dialogue typing
         }
 
         if (!dialogue || dialogue.choices || dialogue.requiresInput) return;
@@ -307,13 +290,6 @@ class MemoryBank {
         // Limit history size to prevent memory issues
         if (this.dialogueHistory.length > 50) {
             this.dialogueHistory.shift();
-        }
-
-        // Handle brain phase if specified
-        if (dialogue.brain && typeof dialogue.brainPhase === 'number') {
-            this.setBrainPhase(dialogue.brainPhase);
-        } else if (!dialogue.brain) {
-            this.setBrainPhase(0); // Hide brain if not needed
         }
 
         // Show/hide skip hint based on scene
@@ -682,7 +658,7 @@ class MemoryBank {
                         `${koviPrefix}${displayText}`;
                     
                     index++;
-                    setTimeout(type, 20);
+                    setTimeout(type, 13); // Reduced delay for faster typing speed
                 } else {
                     this.isTyping = false;
                     resolve();
@@ -770,143 +746,6 @@ class MemoryBank {
             this.showChoices(dialogue.choices, dialogue.storeAs);
         } else {
             this.elements.choices.innerHTML = '';
-        }
-    }
-
-    initBrainVisualization() {
-        const container = document.querySelector('.brain-container .container');
-        const numberOfPoints = 40;
-        const numberOfConnections = 30;
-        
-        // Create neural points with diamond shape
-        for (let i = 0; i < numberOfPoints; i++) {
-            const point = document.createElement('div');
-            point.className = 'neural-point';
-            
-            // Diamond shape sizing
-            const size = 8 + Math.random() * 8;
-            point.style.width = `${size}px`;
-            point.style.height = `${size}px`;
-            
-            let x, y;
-            let isInside = false;
-            
-            while (!isInside) {
-                if (Math.random() < 0.9) {
-                    const angle = Math.random() * Math.PI * 2;
-                    const a = 140 + Math.random() * 40;
-                    const b = 100 + Math.random() * 50;
-                    
-                    x = 200 + Math.cos(angle) * a * (0.5 + Math.random() * 0.5);
-                    y = 180 + Math.sin(angle) * b * (0.5 + Math.random() * 0.5);
-                    
-                    const dx = (x - 200) / a;
-                    const dy = (y - 180) / b;
-                    
-                    if (dx*dx + dy*dy <= 1) {
-                        isInside = true;
-                    }
-                } else {
-                    x = 200 + (Math.random() * 80 - 40);
-                    y = 180 + (Math.random() * 80 - 40);
-                    isInside = true;
-                }
-            }
-            
-            point.style.left = `${x}px`;
-            point.style.top = `${y}px`;
-            point.style.animationDelay = `${Math.random() * 2}s`;
-            
-            container.appendChild(point);
-            this.brainPoints.push({
-                element: point,
-                x, y,
-                phaseTime: Math.floor(Math.random() * 7)
-            });
-        }
-        
-        // Create circuit pattern lines with data pulses
-        for (let i = 0; i < numberOfConnections; i++) {
-            const startPoint = this.brainPoints[Math.floor(Math.random() * this.brainPoints.length)];
-            const endPoint = this.brainPoints[Math.floor(Math.random() * this.brainPoints.length)];
-            
-            if (startPoint !== endPoint) {
-                const line = document.createElement('div');
-                line.className = 'connecting-line';
-                
-                const dx = endPoint.x - startPoint.x;
-                const dy = endPoint.y - startPoint.y;
-                const length = Math.sqrt(dx * dx + dy * dy);
-                const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-                
-                line.style.width = `${length}px`;
-                line.style.left = `${startPoint.x}px`;
-                line.style.top = `${startPoint.y}px`;
-                line.style.transform = `rotate(${angle}deg)`;
-                line.style.animationDelay = `${Math.random() * 3}s`;
-                
-                // Add circuit node at intersection
-                const circuitNode = document.createElement('div');
-                circuitNode.className = 'circuit-node';
-                circuitNode.style.width = '4px';
-                circuitNode.style.height = '4px';
-                circuitNode.style.left = `${startPoint.x}px`;
-                circuitNode.style.top = `${startPoint.y}px`;
-                
-                container.appendChild(line);
-                container.appendChild(circuitNode);
-                startPoint.line = line;
-                startPoint.circuitNode = circuitNode;
-            }
-        }
-    }
-
-    setBrainPhase(phaseNumber) {
-        this.currentBrainPhase = phaseNumber;
-        const brainContainer = document.querySelector('.brain-container');
-        
-        if (phaseNumber === 0) {
-            brainContainer.classList.remove('visible');
-            return;
-        }
-        
-        // Show brain container if not already visible
-        if (!brainContainer.classList.contains('visible')) {
-            brainContainer.classList.add('visible');
-        }
-        
-        // Reset all points first
-        this.brainPoints.forEach(point => {
-            point.element.classList.remove('blue');
-            if (point.line) {
-                point.line.classList.remove('blue');
-            }
-            if (point.circuitNode) {
-                point.circuitNode.classList.remove('blue');
-            }
-        });
-        
-        // Apply blue to appropriate points for the current phase
-        if (phaseNumber > 0) {
-            this.brainPoints.forEach(point => {
-                if (point.phaseTime < phaseNumber) {
-                    point.element.classList.add('blue');
-                    if (point.line) {
-                        if (phaseNumber === 7) {
-                            point.line.classList.add('blue');
-                        } else if (point.phaseTime < phaseNumber) {
-                            point.line.classList.add('blue');
-                        }
-                    }
-                    if (point.circuitNode) {
-                        if (phaseNumber === 7) {
-                            point.circuitNode.classList.add('blue');
-                        } else if (point.phaseTime < phaseNumber) {
-                            point.circuitNode.classList.add('blue');
-                        }
-                    }
-                }
-            });
         }
     }
 }
