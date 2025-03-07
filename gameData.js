@@ -20,64 +20,64 @@ const gameData = {
                 },
                 {
                     text: "Oh good, you're awake. I was beginning to think we'd wasted electricity on your revival. Welcome back to being not dead. For now.",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png',
                     transition: true,
                     emotion: 'shock'
                 },
                 {
-                    text: "I'm KOVI. I run this place where we undie people and fix their finances.",
-                    speaker: 'KOVI',
+                    text: "I'm FINEBOT. I run this place where we undie people and fix their finances.",
+                    speaker: 'FINEBOT',
                     background: 'sterile.png'
                 },
                 {
                     text: "Good news: your money management application has been approved. Bad news: everything else.",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png'
                 },
                 {
                     text: "Your brain appears to have misplaced all financial data during transfer. This is unfortunate. For you specifically, not for me. I'm fine.",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png',
                     emotion: 'cringe'
                 },
                 {
                     text: "That timer? It's counting down to your permanent death if we don't recover your memories.",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'black.png',
                     transition: true,
                     emotion: 'up'
                 },
                 {
                     text: "No pressure. Actually, that's incorrect - there's significant pressure.",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png'
                 },
                 {
                     text: "Look, it's simple -  I ask questions, you answer, your brain reconnects, you continue existing. I'm not seeing any downsides.",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png',
                     emotion: 'a'
                 },
                 {
                     text: "Lets start with basics.",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png'
                 },
                 {
                     text: "Your name:",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     requiresInput: true,
                     background: 'sterile.png'
                 },
                 {
                     text: "Excellent. Your neurons actually remember something. Progress already.",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png'
                 },
                 {
                     text: "Where did you work before your temporary death episode?",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png',
                     emotion: 'sus'
                 },
@@ -132,7 +132,7 @@ const gameData = {
                         const response = responses[choices.employment];
                         return response.text;
                     },
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: function(choices) {
                         const backgrounds = {
                             'Corporate job': 'office.png',
@@ -147,7 +147,7 @@ const gameData = {
                 },
                 {
                     text: "Are you single? The protocol demands I ask. I'm as uncomfortable as you are.",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png',
                     emotion: 'cringe'
                 },
@@ -177,7 +177,7 @@ const gameData = {
                         };
                         return responses[choices.relationshipStatus];
                     },
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: function(choices) {
                         const backgrounds = {
                             'Single': 'single.png',
@@ -220,7 +220,7 @@ const gameData = {
                         };
                         return responses[choices.relationshipStatus];
                     },
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'notsingle.png',
                     condition: function(choices) {
                         return choices.relationshipStatus === 'Not single';
@@ -228,7 +228,7 @@ const gameData = {
                 },
                 {
                     text: "Now your banking geography. Confined to one sad little country, or plotting global economic domination?",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png',
                     emotion: 'sus'
                 },
@@ -260,7 +260,7 @@ const gameData = {
                         };
                         return responses[choices.bankAccounts].text;
                     },
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: function(choices) {
                         const backgrounds = {
                             'Domestic accounts only': '1.png',
@@ -302,7 +302,7 @@ const gameData = {
                         };
                         return responses[choices.travelFrequency];
                     },
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: '1.png',
                     condition: function(choices) {
                         return choices.bankAccounts === 'Domestic accounts only';
@@ -310,12 +310,12 @@ const gameData = {
                 },
                 {
                     text: "Your financial memories are slowly reconstructing, piece by sad, broken piece.",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png'
                 },
                 {
                     text: "Let's scan your wealth-building approach - assuming your plan isn't just 'win the lottery eventually.'",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'invest.png',
                     transition: true,
                 },
@@ -346,18 +346,18 @@ const gameData = {
                         };
                         return responses[choices.investmentStyle];
                     },
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     emotion: 'shock',
                     background: 'invest.png'
                 },
                 {
                     text: "Progress update: You're now only 30% likely to die horribly instead of 95%! I'm a miracle worker!",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png'
                 },
                 {
                     text: "Wait - your brain insists we check your friendship patterns too. Fine, fine!",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png',
                     emotion: 'sus'
                 },
@@ -396,13 +396,13 @@ const gameData = {
                         };
                         return responses[choices.socialFrequency];
                     },
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     emotion: 'smile',
                     background: 'social.png'
                 },
                 {
                     text: "Last question! How do you keep track of that cash disappearing from your account each month?",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'money.png',
                     transition: true
                 },
@@ -439,42 +439,42 @@ const gameData = {
                         };
                         return responses[choices.trackingStyle];
                     },
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'money.png'
                 },
                 {
                     text: "Critical alert! System failure imminent... oh, wait",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png'
                 },
                 {
                     text: "Sorry, that was last week's patient. WE DID IT! Your consciousness has officially decided that living is preferable to not living!",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png',
                     stopTimer: true
                 },
                 {
                     text: "Now we just need your email to finish registration.",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png',
                     emotion: 'smile'
                 },
                 {
                     text: "Enter your email to join the waitlist",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     requiresInput: true,
                     storeAs: 'userEmail',
                     background: 'sterile.png'
                 },
                 {
-                    text: "Email verified! Fun fact - I wasn't actually talking before. Your dying consciousness was translating repair protocols into this 'KOVI' entity while your brain rebuilt itself.",
-                    speaker: 'KOVI',
+                    text: "Email verified! Fun fact - I wasn't actually talking before. Your dying consciousness was translating repair protocols into this 'FINEBOT' entity while your brain rebuilt itself.",
+                    speaker: 'FINEBOT',
                     background: 'sterile.png',
                     emotion: 'shock'
                 },
                 {
                     text: "Anyway, congrats on the whole not-being-dead thing! In the future, please die more conveniently. I had to cancel my virtual poker night to bring you back, and those byte-sized chips don't win themselves.",
-                    speaker: 'KOVI',
+                    speaker: 'FINEBOT',
                     background: 'sterile.png'
                 },
                 {
