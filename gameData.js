@@ -7,7 +7,7 @@ const gameData = {
                     isNarration: true,
                     nextScene: 'wakeUp',
                     isTimedSequence: true,
-                    timerDuration: 180 // 3 minutes in seconds
+                    timerDuration: 120 // 2 minutes in seconds
                 }
             ]
         },
@@ -15,7 +15,7 @@ const gameData = {
             background: 'black.jpg',
             dialogue: [
                 {
-                    text: '*You open your eyes. A strange robot appears in front of you.*',
+                    text: '*You open your eyes. A strange floating screen appears in front of you.*',
                     isNarration: true
                 },
                 {
@@ -72,12 +72,12 @@ const gameData = {
                     background: 'sterile.png'
                 },
                 {
-                    text: "What paid for your existence before your temporary death episode?",
+                    text: "Where did you work before your temporary death episode?",
                     speaker: 'KOVI',
                     background: 'sterile.png'
                 },
                 {
-                    text: "Where did you work?",
+                    text: "Your occupation?",
                     background: 'sterile.png',
                     choices: [
                         {
@@ -127,10 +127,19 @@ const gameData = {
                         return response.text;
                     },
                     speaker: 'KOVI',
-                    background: 'sterile.png'
+                    background: function(choices) {
+                        const backgrounds = {
+                            'Corporate job': 'office.png',
+                            'Freelance': 'freelancer.png',
+                            'Business owner': 'boss.png',
+                            'Not employed': 'broke.png'
+                        };
+                        return backgrounds[choices.employment];
+                    },
+                    transition: true
                 },
                 {
-                    text: "I need to ask about your cohabitation status. Not because I care about your personal life. It's relevant to financial patterns. And slightly amusing.",
+                    text: "Are you single? The protocol demands I ask. I'm as uncomfortable as you are.",
                     speaker: 'KOVI',
                     background: 'sterile.png'
                 },
@@ -163,7 +172,7 @@ const gameData = {
                     background: 'sterile.png'
                 },
                 {
-                    text: "Money sharing status:",
+                    text: "How you share expenses with your partner:",
                     background: 'sterile.png',
                     condition: function(choices) {
                         return choices.relationshipStatus === 'Not single';
@@ -240,7 +249,13 @@ const gameData = {
                         return responses[choices.bankAccounts].text;
                     },
                     speaker: 'KOVI',
-                    background: 'sterile.png'
+                    background: function(choices) {
+                        const backgrounds = {
+                            'Domestic accounts only': '1.png',
+                            'International accounts too': '2.png'
+                        };
+                        return backgrounds[choices.bankAccounts];
+                    }
                 },
                 {
                     text: "Travel frequency?",
@@ -294,26 +309,26 @@ const gameData = {
                     background: 'sterile.png'
                 },
                 {
-                    text: "When it comes to financial future planning, are you team 'let my employer figure it out,' team 'I've got this handled,' or team 'bold of you to assume I have extra money'?",
-                    speaker: 'KOVI',
-                    background: 'sterile.png'
-                },
-                {
                     text: "Investment strategy?",
                     background: 'sterile.png',
                     choices: [
                         {
-                            text: 'I invest through my employer',
+                            text: 'Relying only on retirement accounts',
                             response: "Retirement-only investor! You've perfected the financial strategy of 'set it, forget it, and panic about it at 3 AM when you're 64.",
                             background: 'sterile.png'
                         },
                         {
-                            text: 'I also invest on my own',
+                            text: 'Casual investor (real estate or brokerage)',
                             response: "Self-directed investor! You've mastered that special feeling of being both smug and terrified every time you invest in something.",
                             background: 'sterile.png'
                         },
                         {
-                            text: 'What investments?',
+                            text: 'High-risk, high-reward (stocks, crypto, options, etc.)',
+                            response: ".",
+                            background: 'sterile.png'
+                        },
+                        {
+                            text: 'Investing? What’s that?',
                             response: "No investing at all? Living completely in the present! Future You is sending a telepathic eye-roll, but Present You is having a great time.",
                             background: 'sterile.png'
                         }
@@ -323,9 +338,10 @@ const gameData = {
                 {
                     text: function(choices) {
                         const responses = {
-                            'I invest through my employer': "Retirement-only investor! You've perfected the financial strategy of 'set it, forget it, and panic about it at 3 AM when you're 64.",
-                            'I also invest on my own': "Self-directed investor! You've mastered that special feeling of being both smug and terrified every time you buy a stock.",
-                            'What investments?': "No investing at all? Living completely in the present! Future You is sending a telepathic eye-roll, but Present You is having a great time."
+                            'Relying only on retirement accounts': "Retirement-only investor! You've perfected the financial strategy of 'set it, forget it, and panic about it at 3 AM when you're 64.",
+                            'Casual investor (real estate or brokerage)': "Self-directed investor! You've mastered that special feeling of being both smug and terrified every time you invest in something.",
+                            'High-risk, high-reward (stocks, crypto, options, etc.)': ".",
+                            'Investing? What’s that?': "No investing at all? Living completely in the present! Future You is sending a telepathic eye-roll, but Present You is having a great time."
                         };
                         return responses[choices.investmentStyle];
                     },
@@ -344,11 +360,6 @@ const gameData = {
                 },
                 {
                     text: "How often do you hang out with friends?",
-                    speaker: 'KOVI',
-                    background: 'sterile.png'
-                },
-                {
-                    text: "Friends?",
                     background: 'sterile.png',
                     choices: [
                         {
@@ -388,7 +399,7 @@ const gameData = {
                     background: 'sterile.png'
                 },
                 {
-                    text: "Now, financial tracking habits. How do you keep track of that cash disappearing from your account each month?",
+                    text: "Last question! How do you keep track of that cash disappearing from your account each month?",
                     speaker: 'KOVI',
                     background: 'sterile.png'
                 },
@@ -397,8 +408,8 @@ const gameData = {
                     background: 'sterile.png',
                     choices: [
                         {
-                            text: 'Use tracking apps',
-                            response: "App tracker! You've downloaded shiny financial apps that promised organization but mostly excel at sending notifications to remind you how much you spent on coffee this week.",
+                            text: 'Using a tool for tracking',
+                            response: "App user! Now your phone knows your shameful secrets AND your spending habits.",
                             background: 'sterile.png'
                         },
                         {
@@ -407,7 +418,7 @@ const gameData = {
                             background: 'sterile.png'
                         },
                         {
-                            text: 'I made my own spreadsheet',
+                            text: 'Made my own spreadsheet',
                             response: "Spreadsheet budget master! Nothing says 'I'm in control' like color-coded cells that silently judge your latte purchases.",
                             background: 'sterile.png'
                         },
@@ -422,9 +433,9 @@ const gameData = {
                 {
                     text: function(choices) {
                         const responses = {
-                            'Use tracking apps': "App tracker! You've downloaded shiny financial apps that promised organization but mostly excel at sending notifications to remind you how much you spent on coffee this week.",
+                            'Using a tool for tracking': "App user! Now your phone knows your shameful secrets AND your spending habits.",
                             'I tried tracking but gave up': "Oh, you poor confused human! Still haven't found 'the one' that actually makes sense for how you live. It's definitely them, not you.",
-                            'I made my own spreadsheet': "Spreadsheet budget master! Nothing says 'I'm in control' like color-coded cells that silently judge your latte purchases.",
+                            'Made my own spreadsheet': "Spreadsheet budget master! Nothing says 'I'm in control' like color-coded cells that silently judge your latte purchases.",
                             'No tracking': "Tracking-free lifestyle! Your money management philosophy is 'if I don't look at it, it can't hurt me."
                         };
                         return responses[choices.trackingStyle];
@@ -433,51 +444,7 @@ const gameData = {
                     background: 'sterile.png'
                 },
                 {
-                    text: "We're down to the wire! And I mean that literally - your neural wires are about to short-circuit!",
-                    speaker: 'KOVI',
-                    background: 'sterile.png'
-                },
-                {
-                    text: "Last question! You're at a fancy restaurant with friends. The bill arrives. What's your FIRST instinct to pay with?",
-                    speaker: 'KOVI',
-                    background: 'sterile.png'
-                },
-                {
-                    text: "Payment methods?",
-                    background: 'sterile.png',
-                    choices: [
-                        {
-                            text: 'Cash or debit',
-                            response: "Anti-credit card crusader! You've taken a moral stand against borrowing money at 29.99% interest. How unreasonably reasonable of you.",
-                            background: 'sterile.png'
-                        },
-                        {
-                            text: 'Basic credit card',
-                            response: "Credit card minimalist! You've mastered the art of building credit without needing a spreadsheet to remember which card to use on Tuesdays at gas stations.",
-                            background: 'sterile.png'
-                        },
-                        {
-                            text: 'Special dining credit card',
-                            response: "Rewards card junkie! The only person who gets genuinely aroused by the phrase '5% cash back on rotating quarterly categories.'",
-                            background: 'sterile.png'
-                        }
-                    ],
-                    storeAs: 'paymentMethod'
-                },
-                {
-                    text: function(choices) {
-                        const responses = {
-                            'Cash or debit': "Old school! Your neurons have tiny wallets with pictures of other neurons in them.",
-                            'Basic credit card': "Modest plastic user! Your neurons enjoy occasional swipe therapy.",
-                            'Special dining credit card': "Rewards optimizer! Your brain contains a tiny accountant who never sleeps."
-                        };
-                        return responses[choices.paymentMethod];
-                    },
-                    speaker: 'KOVI',
-                    background: 'sterile.png'
-                },
-                {
-                    text: "Critical alert! System failure imminent... wait, no",
+                    text: "Critical alert! System failure imminent... oh, wait",
                     speaker: 'KOVI',
                     background: 'sterile.png'
                 },
@@ -485,9 +452,10 @@ const gameData = {
                     text: "Sorry, that was last week's patient. WE DID IT! Your consciousness has officially decided that living is preferable to not living!",
                     speaker: 'KOVI',
                     background: 'sterile.png',
+                    stopTimer: true
                 },
                 {
-                    text: "Now we just need your email for the warranty registration.",
+                    text: "Now we just need your email to finish registration.",
                     speaker: 'KOVI',
                     background: 'sterile.png'
                 },
