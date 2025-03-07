@@ -169,11 +169,18 @@ const gameData = {
                         return responses[choices.relationshipStatus];
                     },
                     speaker: 'KOVI',
-                    background: 'sterile.png'
+                    background: function(choices) {
+                        const backgrounds = {
+                            'Single': 'single.png',
+                            'Not single': 'notsingle.png'
+                        };
+                        return backgrounds[choices.relationshipStatus];
+                    },
+                    transition: true
                 },
                 {
                     text: "How you share expenses with your partner:",
-                    background: 'sterile.png',
+                    background: 'notsingle.png',
                     condition: function(choices) {
                         return choices.relationshipStatus === 'Not single';
                     },
@@ -181,20 +188,18 @@ const gameData = {
                         {
                             text: 'Fully merged finances',
                             response: "Like sharing a brain but for money. 'Our retirement account' sounds romantic until someone impulse-buys a kayak.",
-                            background: 'sterile.png'
                         },
                         {
                             text: 'Some shared, some separate',
                             response: "Partial financial fusion! You've discovered the perfect balance between 'what's mine is yours' and 'please don't ask how much this cost.",
-                            background: 'sterile.png'
                         },
                         {
                             text: 'Completely separate',
                             response: "Financial independence maintained! Two people sharing a life but keeping receipts. 'I love you eternally, but that's definitely your Netflix charge.'",
-                            background: 'sterile.png'
                         }
                     ],
-                    storeAs: 'financialArrangement'
+                    storeAs: 'financialArrangement',
+                    background: 'notsingle.png'
                 },
                 {
                     text: function(choices) {
@@ -204,10 +209,10 @@ const gameData = {
                             'Some shared, some separate': "Partial financial fusion! You've discovered the perfect balance between 'what's mine is yours' and 'please don't ask how much this cost.",
                             'Completely separate': "Financial independence maintained! Two people sharing a life but keeping receipts. 'I love you eternally, but that's definitely your Netflix charge.'"
                         };
-                        return responses[choices.financialArrangement];
+                        return responses[choices.relationshipStatus];
                     },
                     speaker: 'KOVI',
-                    background: 'sterile.png',
+                    background: 'notsingle.png',
                     condition: function(choices) {
                         return choices.relationshipStatus === 'Not single';
                     }
@@ -224,12 +229,10 @@ const gameData = {
                         {
                             text: 'Domestic accounts only',
                             response: "Local accounts? Got it. And do you periodically cross borders while your dollars stay home wearing little American flag pins?",
-                            background: 'sterile.png'
                         },
                         {
                             text: 'International accounts too',
                             response: "Oh, international player. Your neurons have tiny passports with embarrassing photos. Even in your brain, passport photos look terrible.",
-                            background: 'sterile.png'
                         }
                     ],
                     storeAs: 'bankAccounts'
@@ -239,11 +242,9 @@ const gameData = {
                         const responses = {
                             'Domestic accounts only': {
                                 text: "Local accounts? Got it. And do you periodically cross borders while your dollars stay home wearing little American flag pins?",
-                                background: 'sterile.png'
                             },
                             'International accounts too': {
                                 text: "Oh, international player. Your neurons have tiny passports with embarrassing photos. Even in your brain, passport photos look terrible.",
-                                background: 'sterile.png'
                             }
                         };
                         return responses[choices.bankAccounts].text;
@@ -255,11 +256,12 @@ const gameData = {
                             'International accounts too': '2.png'
                         };
                         return backgrounds[choices.bankAccounts];
-                    }
+                    },
+                    transition: true
                 },
                 {
                     text: "Travel frequency?",
-                    background: 'sterile.png',
+                    background: '1.png',
                     condition: function(choices) {
                         return choices.bankAccounts === 'Domestic accounts only';
                     },
@@ -267,17 +269,14 @@ const gameData = {
                         {
                             text: 'Homebody',
                             response: "Proximity traveler! You've realized that 'no place like home' isn't just a saying—it's a lifestyle choice with excellent Wi-Fi.",
-                            background: 'sterile.png'
                         },
                         {
                             text: 'Annual trips',
                             response: "Annual trip taker! That moment when you're finally lying on the beach and your brain whispers, 'Only 51 more weeks until you can do this again!",
-                            background: 'sterile.png'
                         },
                         {
                             text: 'Frequent traveler',
                             response: "Frequent traveler? Your brain can't remember what time zone it belongs in anymore. But it has lots of hotel points!",
-                            background: 'sterile.png'
                         }
                     ],
                     storeAs: 'travelFrequency'
@@ -293,7 +292,7 @@ const gameData = {
                         return responses[choices.travelFrequency];
                     },
                     speaker: 'KOVI',
-                    background: 'sterile.png',
+                    background: '1.png',
                     condition: function(choices) {
                         return choices.bankAccounts === 'Domestic accounts only';
                     }
@@ -306,31 +305,23 @@ const gameData = {
                 {
                     text: "Let's scan your wealth-building approach - assuming your plan isn't just 'win the lottery eventually.'",
                     speaker: 'KOVI',
-                    background: 'sterile.png'
+                    background: 'invest.png',
+                    transition: true
                 },
                 {
                     text: "Investment strategy?",
-                    background: 'sterile.png',
+                    background: 'invest.png',
                     choices: [
                         {
-                            text: 'Relying only on retirement accounts',
-                            response: "Retirement-only investor! You've perfected the financial strategy of 'set it, forget it, and panic about it at 3 AM when you're 64.",
-                            background: 'sterile.png'
-                        },
+                            text: 'Just retirement accounts/401k',
+                            response: "Retirement-only investor! You've perfected the financial strategy of 'set it, forget it, and panic about it at 3 AM when you're 64.",                        },
                         {
-                            text: 'Casual investor (real estate or brokerage)',
+                            text: 'Beyond basics - stocks, real estate, etc.',
                             response: "Self-directed investor! You've mastered that special feeling of being both smug and terrified every time you invest in something.",
-                            background: 'sterile.png'
-                        },
-                        {
-                            text: 'High-risk, high-reward (stocks, crypto, options, etc.)',
-                            response: ".",
-                            background: 'sterile.png'
                         },
                         {
                             text: 'Investing? What’s that?',
                             response: "No investing at all? Living completely in the present! Future You is sending a telepathic eye-roll, but Present You is having a great time.",
-                            background: 'sterile.png'
                         }
                     ],
                     storeAs: 'investmentStyle'
@@ -340,13 +331,12 @@ const gameData = {
                         const responses = {
                             'Relying only on retirement accounts': "Retirement-only investor! You've perfected the financial strategy of 'set it, forget it, and panic about it at 3 AM when you're 64.",
                             'Casual investor (real estate or brokerage)': "Self-directed investor! You've mastered that special feeling of being both smug and terrified every time you invest in something.",
-                            'High-risk, high-reward (stocks, crypto, options, etc.)': ".",
                             'Investing? What’s that?': "No investing at all? Living completely in the present! Future You is sending a telepathic eye-roll, but Present You is having a great time."
                         };
                         return responses[choices.investmentStyle];
                     },
                     speaker: 'KOVI',
-                    background: 'sterile.png'
+                    background: 'invest.png'
                 },
                 {
                     text: "Progress update: You're now only 30% likely to die horribly instead of 95%! I'm a miracle worker!",
@@ -360,30 +350,27 @@ const gameData = {
                 },
                 {
                     text: "How often do you hang out with friends?",
-                    background: 'sterile.png',
+                    background: 'social.png',
                     choices: [
                         {
                             text: 'Very often',
                             response: "Social butterfly on steroids! You've never met a person you couldn't turn into a friend, therapist, or uncomfortable hostage of your life story.",
-                            background: 'sterile.png'
                         },
                         {
                             text: 'About once a week',
                             response: "Once-a-week people person! You've turned friendship into a scheduled appointment that falls somewhere between oil changes and haircuts.",
-                            background: 'sterile.png'
                         },
                         {
                             text: 'Few times a month',
                             response: "Strategic socializer! You carefully ration your extrovert energy like it's a non-renewable resource – which for you, it is.",
-                            background: 'sterile.png'
                         },
                         {
                             text: 'Rarely',
                             response: "Social minimalist! Your friends think you've moved away, died, or joined a cult, but you're just enjoying the quiet.",
-                            background: 'sterile.png'
                         }
                     ],
-                    storeAs: 'socialFrequency'
+                    storeAs: 'socialFrequency',
+                    transition: true
                 },
                 {
                     text: function(choices) {
@@ -396,36 +383,33 @@ const gameData = {
                         return responses[choices.socialFrequency];
                     },
                     speaker: 'KOVI',
-                    background: 'sterile.png'
+                    background: 'social.png'
                 },
                 {
                     text: "Last question! How do you keep track of that cash disappearing from your account each month?",
                     speaker: 'KOVI',
-                    background: 'sterile.png'
+                    background: 'money.png',
+                    transition: true
                 },
                 {
                     text: "Money tracking approach?",
-                    background: 'sterile.png',
+                    background: 'money.png',
                     choices: [
                         {
                             text: 'Using a tool for tracking',
                             response: "App user! Now your phone knows your shameful secrets AND your spending habits.",
-                            background: 'sterile.png'
                         },
                         {
                             text: 'I tried tracking but gave up',
                             response: "Oh, you poor confused human! Still haven't found 'the one' that actually makes sense for how you live. It's definitely them, not you.",
-                            background: 'sterile.png'
                         },
                         {
                             text: 'Made my own spreadsheet',
                             response: "Spreadsheet budget master! Nothing says 'I'm in control' like color-coded cells that silently judge your latte purchases.",
-                            background: 'sterile.png'
                         },
                         {
                             text: 'No tracking',
                             response: "Tracking-free lifestyle! Your money management philosophy is 'if I don't look at it, it can't hurt me.",
-                            background: 'sterile.png'
                         }
                     ],
                     storeAs: 'trackingStyle'
@@ -441,7 +425,7 @@ const gameData = {
                         return responses[choices.trackingStyle];
                     },
                     speaker: 'KOVI',
-                    background: 'sterile.png'
+                    background: 'money.png'
                 },
                 {
                     text: "Critical alert! System failure imminent... oh, wait",
