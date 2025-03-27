@@ -1,802 +1,703 @@
-class MemoryBank {
-    constructor() {
-        this.currentScene = 'intro';
-        this.dialogueIndex = 0;
-        this.isTyping = false;
-        this.gameStarted = false;
-        this.playerChoices = {};
-        this.playerName = '';
-        this.isTransitioning = false;
-        this.dialogueHistory = [];
-        this.timer = null;
-        this.isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-        this.isMusicPlaying = false;
-        this.currentVoice = null;
-        this.imageCache = new Map();
+// Main data storage
+let allCards = [];
+let selectedCards = [];
+let expenses = {};
+
+// DOM Elements
+const availableCardsList = document.getElementById('available-cards-list');
+const selectedCardsList = document.getElementById('selected-cards-list');
+const cardSearchInput = document.getElementById('card-search-input');
+const calculateButton = document.getElementById('calculate-button');
+const resultsSection = document.getElementById('results');
+const totalRewardsValue = document.getElementById('total-rewards-value');
+const cardValueBody = document.getElementById('card-value-body');
+const cardDetailsModal = document.getElementById('card-details-modal');
+const modalCardName = document.getElementById('modal-card-name');
+const modalCardDetails = document.getElementById('modal-card-details');
+const closeModal = document.querySelector('.close-modal');
+
+// Category mapping
+const categoryMapping = {
+    'Rewards on all purchases': 'All Purchases',
+    'Groceries': 'Groceries',
+    'Dining': 'Dining',
+    'Gas': 'Gas',
+    'Flights (Direct)': 'Flights (Direct)',
+    'Flights (Portal)': 'Flights (Portal)',
+    'Hotels (Direct)': 'Hotels (Direct)',
+    'Hotels (Portal)': 'Hotels (Portal)',
+    'Car Rent (Direct)': 'Car Rental (Direct)',
+    'Car Rent (Portal)': 'Car Rental (Portal)',
+    'Travel (Direct)': 'Travel (Direct)',
+    'Travel (Portal)': 'Travel (Portal)',
+    'Entertainment': 'Entertainment',
+    'Streaming': 'Streaming',
+    'Transport': 'Transport',
+    'Online Shopping': 'Online Shopping',
+    'Internet & Phone': 'Internet & Phone',
+    'ADS Business': 'ADS Business',
+    'Office supplies': 'Office Supplies'
+};
+
+// Initialize the app
+document.addEventListener('DOMContentLoaded', () => {
+    // Load the CSV data
+    loadCardData();
+    
+    // Set up event listeners
+    setupEventListeners();
+});
+
+// Load credit card data from a hardcoded array instead of CSV
+function loadCardData() {
+    console.log("Loading credit card data from hardcoded array...");
+    
+    // Directly use card data from the CSV without having to load the file
+    const csvCards = [
+        {
+            "Name": "Chase Sapphire Preferred",
+            "Issuer Name": "Chase",
+            "Type": "Visa Signature",
+            "Credit Score Needed": "Excellent",
+            "Annual Fee": "$95",
+            "Reward Type": "Ultimate Rewards",
+            "Points Value": 1.25,
+            "Rewards on all purchases": 1,
+            "Groceries": 1,
+            "Dining": 3,
+            "Gas": 1,
+            "Flights (Direct)": 2,
+            "Flights (Portal)": 5,
+            "Hotels (Direct)": 2,
+            "Hotels (Portal)": 5,
+            "Car Rent (Direct)": 2,
+            "Car Rent (Portal)": 5,
+            "Travel (Direct)": 2,
+            "Travel (Portal)": 5,
+            "Entertainment": 1,
+            "Streaming": 1,
+            "Transport": 2,
+            "Online Shopping": 1,
+            "Internet & Phone": 1,
+            "ADS Business": 1,
+            "Office supplies": 1,
+            "CDW": "Yes",
+            "FX Fee": "No",
+            "Purchase protection": "Yes",
+            "Cell phone protection": "No",
+            "Other details": "Trip cancellation/interruption, trip delay, baggage delay insurance"
+        },
+        {
+            "Name": "Chase Sapphire Reserve",
+            "Issuer Name": "Chase",
+            "Type": "Visa Infinite",
+            "Credit Score Needed": "Excellent",
+            "Annual Fee": "$550",
+            "Reward Type": "Ultimate Rewards",
+            "Points Value": 1.5,
+            "Rewards on all purchases": 1,
+            "Groceries": 1,
+            "Dining": 3,
+            "Gas": 1,
+            "Flights (Direct)": 3,
+            "Flights (Portal)": 5,
+            "Hotels (Direct)": 3,
+            "Hotels (Portal)": 10,
+            "Car Rent (Direct)": 3,
+            "Car Rent (Portal)": 10,
+            "Travel (Direct)": 3,
+            "Travel (Portal)": 10,
+            "Entertainment": 1,
+            "Streaming": 1,
+            "Transport": 3,
+            "Online Shopping": 1,
+            "Internet & Phone": 1,
+            "ADS Business": 1,
+            "Office supplies": 1,
+            "CDW": "Yes",
+            "FX Fee": "No",
+            "Purchase protection": "Yes",
+            "Cell phone protection": "No",
+            "Other details": "$300 annual travel credit, Priority Pass, Global Entry/TSA PreCheck"
+        },
+        {
+            "Name": "American Express Gold Card",
+            "Issuer Name": "American Express",
+            "Type": "Credit Card",
+            "Credit Score Needed": "Excellent",
+            "Annual Fee": "$250",
+            "Reward Type": "Membership Rewards",
+            "Points Value": 1.0,
+            "Rewards on all purchases": 1,
+            "Groceries": 4,
+            "Dining": 4,
+            "Gas": 1,
+            "Flights (Direct)": 3,
+            "Flights (Portal)": 1,
+            "Hotels (Direct)": 1,
+            "Hotels (Portal)": 1,
+            "Car Rent (Direct)": 1,
+            "Car Rent (Portal)": 1,
+            "Travel (Direct)": 1,
+            "Travel (Portal)": 1,
+            "Entertainment": 1,
+            "Streaming": 1,
+            "Transport": 1,
+            "Online Shopping": 1,
+            "Internet & Phone": 1,
+            "ADS Business": 1,
+            "Office supplies": 1,
+            "CDW": "No",
+            "FX Fee": "Yes",
+            "Purchase protection": "Yes",
+            "Cell phone protection": "No",
+            "Other details": "$120 dining credit, $120 Uber Cash, $100 hotel credit"
+        },
+        {
+            "Name": "American Express Platinum",
+            "Issuer Name": "American Express",
+            "Type": "Credit Card",
+            "Credit Score Needed": "Excellent",
+            "Annual Fee": "$695",
+            "Reward Type": "Membership Rewards",
+            "Points Value": 1.0,
+            "Rewards on all purchases": 1,
+            "Groceries": 1,
+            "Dining": 1,
+            "Gas": 1,
+            "Flights (Direct)": 5,
+            "Flights (Portal)": 5,
+            "Hotels (Direct)": 1,
+            "Hotels (Portal)": 5,
+            "Car Rent (Direct)": 1,
+            "Car Rent (Portal)": 1,
+            "Travel (Direct)": 1,
+            "Travel (Portal)": 1,
+            "Entertainment": 1,
+            "Streaming": 1,
+            "Transport": 1,
+            "Online Shopping": 1,
+            "Internet & Phone": 1,
+            "ADS Business": 1,
+            "Office supplies": 1,
+            "CDW": "Yes",
+            "FX Fee": "No",
+            "Purchase protection": "Yes",
+            "Cell phone protection": "No",
+            "Other details": "$200 airline fee credit, $200 hotel credit, $240 digital entertainment credit, Centurion Lounge access"
+        },
+        {
+            "Name": "Capital One Venture",
+            "Issuer Name": "Capital One",
+            "Type": "Visa Signature",
+            "Credit Score Needed": "Good/Excellent",
+            "Annual Fee": "$95",
+            "Reward Type": "Miles",
+            "Points Value": 1.0,
+            "Rewards on all purchases": 2,
+            "Groceries": 2,
+            "Dining": 2,
+            "Gas": 2,
+            "Flights (Direct)": 2,
+            "Flights (Portal)": 5,
+            "Hotels (Direct)": 2,
+            "Hotels (Portal)": 5,
+            "Car Rent (Direct)": 2,
+            "Car Rent (Portal)": 5,
+            "Travel (Direct)": 2,
+            "Travel (Portal)": 5,
+            "Entertainment": 2,
+            "Streaming": 2,
+            "Transport": 2,
+            "Online Shopping": 2,
+            "Internet & Phone": 2,
+            "ADS Business": 2,
+            "Office supplies": 2,
+            "CDW": "Yes",
+            "FX Fee": "No",
+            "Purchase protection": "Yes",
+            "Cell phone protection": "No",
+            "Other details": "Global Entry/TSA PreCheck credit"
+        },
+        {
+            "Name": "Capital One Venture X",
+            "Issuer Name": "Capital One",
+            "Type": "Visa Infinite",
+            "Credit Score Needed": "Excellent",
+            "Annual Fee": "$395",
+            "Reward Type": "Miles",
+            "Points Value": 1.0,
+            "Rewards on all purchases": 2,
+            "Groceries": 2,
+            "Dining": 2,
+            "Gas": 2,
+            "Flights (Direct)": 5,
+            "Flights (Portal)": 10,
+            "Hotels (Direct)": 2,
+            "Hotels (Portal)": 10,
+            "Car Rent (Direct)": 2,
+            "Car Rent (Portal)": 10,
+            "Travel (Direct)": 2,
+            "Travel (Portal)": 10,
+            "Entertainment": 2,
+            "Streaming": 2,
+            "Transport": 2,
+            "Online Shopping": 2,
+            "Internet & Phone": 2,
+            "ADS Business": 2,
+            "Office supplies": 2,
+            "CDW": "Yes",
+            "FX Fee": "No",
+            "Purchase protection": "Yes",
+            "Cell phone protection": "Yes",
+            "Other details": "$300 travel credit, 10,000 anniversary miles, Priority Pass, Capital One Lounge access"
+        },
+        {
+            "Name": "Citi Double Cash",
+            "Issuer Name": "Citi",
+            "Type": "Mastercard",
+            "Credit Score Needed": "Good/Excellent",
+            "Annual Fee": "$0",
+            "Reward Type": "Cash Back/ThankYou Points",
+            "Points Value": 1.0,
+            "Rewards on all purchases": 2,
+            "Groceries": 2,
+            "Dining": 2,
+            "Gas": 2,
+            "Flights (Direct)": 2,
+            "Flights (Portal)": 2,
+            "Hotels (Direct)": 2,
+            "Hotels (Portal)": 2,
+            "Car Rent (Direct)": 2,
+            "Car Rent (Portal)": 2,
+            "Travel (Direct)": 2,
+            "Travel (Portal)": 2,
+            "Entertainment": 2,
+            "Streaming": 2,
+            "Transport": 2,
+            "Online Shopping": 2,
+            "Internet & Phone": 2,
+            "ADS Business": 2,
+            "Office supplies": 2,
+            "CDW": "No",
+            "FX Fee": "Yes",
+            "Purchase protection": "No",
+            "Cell phone protection": "No",
+            "Other details": "1% when you buy, 1% when you pay"
+        },
+        {
+            "Name": "Citi Premier",
+            "Issuer Name": "Citi",
+            "Type": "Mastercard",
+            "Credit Score Needed": "Good/Excellent",
+            "Annual Fee": "$95",
+            "Reward Type": "ThankYou Points",
+            "Points Value": 1.0,
+            "Rewards on all purchases": 1,
+            "Groceries": 3,
+            "Dining": 3,
+            "Gas": 3,
+            "Flights (Direct)": 3,
+            "Flights (Portal)": 3,
+            "Hotels (Direct)": 3,
+            "Hotels (Portal)": 3,
+            "Car Rent (Direct)": 1,
+            "Car Rent (Portal)": 1,
+            "Travel (Direct)": 1,
+            "Travel (Portal)": 1,
+            "Entertainment": 1,
+            "Streaming": 1,
+            "Transport": 1,
+            "Online Shopping": 1,
+            "Internet & Phone": 1,
+            "ADS Business": 1,
+            "Office supplies": 1,
+            "CDW": "Yes",
+            "FX Fee": "No",
+            "Purchase protection": "Yes",
+            "Cell phone protection": "No",
+            "Other details": "$100 annual hotel credit"
+        },
+        {
+            "Name": "Discover it Cash Back",
+            "Issuer Name": "Discover",
+            "Type": "Credit Card",
+            "Credit Score Needed": "Good",
+            "Annual Fee": "$0",
+            "Reward Type": "Cash Back",
+            "Points Value": 1.0,
+            "Rewards on all purchases": 1,
+            "Groceries": 5,
+            "Dining": 5,
+            "Gas": 5,
+            "Flights (Direct)": 1,
+            "Flights (Portal)": 1,
+            "Hotels (Direct)": 1,
+            "Hotels (Portal)": 1,
+            "Car Rent (Direct)": 1,
+            "Car Rent (Portal)": 1,
+            "Travel (Direct)": 1,
+            "Travel (Portal)": 1,
+            "Entertainment": 5,
+            "Streaming": 5,
+            "Online Shopping": 5,
+            "Internet & Phone": 1,
+            "ADS Business": 1,
+            "Office supplies": 1,
+            "CDW": "No",
+            "FX Fee": "No",
+            "Purchase protection": "No",
+            "Cell phone protection": "No",
+            "Other details": "5% rotating quarterly categories (up to $1,500), cashback match first year"
+        },
+        {
+            "Name": "Chase Freedom Flex",
+            "Issuer Name": "Chase",
+            "Type": "Mastercard",
+            "Credit Score Needed": "Good/Excellent",
+            "Annual Fee": "$0",
+            "Reward Type": "Ultimate Rewards",
+            "Points Value": 1.0,
+            "Rewards on all purchases": 1,
+            "Groceries": 5,
+            "Dining": 3,
+            "Gas": 5,
+            "Flights (Direct)": 5,
+            "Flights (Portal)": 5,
+            "Hotels (Direct)": 1,
+            "Hotels (Portal)": 5,
+            "Car Rent (Direct)": 1,
+            "Car Rent (Portal)": 5,
+            "Travel (Direct)": 1,
+            "Travel (Portal)": 5,
+            "Entertainment": 5,
+            "Streaming": 5,
+            "Transport": 1,
+            "Online Shopping": 5,
+            "Internet & Phone": 1,
+            "ADS Business": 1,
+            "Office supplies": 1,
+            "CDW": "Yes",
+            "FX Fee": "Yes",
+            "Purchase protection": "Yes",
+            "Cell phone protection": "Yes",
+            "Other details": "5% rotating quarterly categories (up to $1,500)"
+        }
+    ];
+    
+    allCards = cleanupCardData(csvCards);
+    renderAvailableCards(allCards);
+}
+
+// Clean up and normalize card data
+function cleanupCardData(cards) {
+    return cards.map(card => {
+        // Convert annual fee to number
+        let annualFee = 0;
+        if (card['Annual Fee'] && typeof card['Annual Fee'] === 'string') {
+            // Remove $ and any non-numeric chars except decimal point
+            const feeStr = card['Annual Fee'].replace(/[^0-9.]/g, '');
+            annualFee = parseFloat(feeStr) || 0;
+        }
         
-        // Create background music
-        this.backgroundMusic = new Audio('audio/music1.mp3');
-        this.backgroundMusic.loop = true;
-        this.backgroundMusic.volume = 0.011;
-        
-        // Cache DOM elements
-        this.elements = {
-            startScreen: document.getElementById('start-screen'),
-            gameScreen: document.getElementById('game-screen'),
-            dialogueBox: document.getElementById('dialogue-box'),
-            dialogueText: document.getElementById('dialogue-text'),
-            speaker: document.getElementById('speaker'),
-            background: document.getElementById('background'),
-            choices: document.getElementById('choices-container'),
-            transitionOverlay: document.getElementById('transition-overlay'),
-            aria: document.getElementById('aria-sprite'),
-            backButton: document.getElementById('back-button'),
-            skipHint: document.createElement('div'),
-            musicButton: document.createElement('button'),
-            statusDisplay: document.getElementById('status-display')
+        // Create a clean object with the data we need
+        return {
+            name: card['Name'] || 'Unknown Card',
+            issuer: card['Issuer Name'] || 'Unknown Issuer',
+            type: card['Type'] || '',
+            annualFee: annualFee,
+            rewardType: card['Reward Type'] || '',
+            creditScore: card['Credit Score Needed'] || '',
+            pointsValue: parseFloat(card['Points Value']) || 1.0,
+            rewards: {
+                'Rewards on all purchases': parseFloat(card['Rewards on all purchases']) || 0,
+                'Groceries': parseFloat(card['Groceries']) || 0,
+                'Dining': parseFloat(card['Dining']) || 0,
+                'Gas': parseFloat(card['Gas']) || 0,
+                'Flights (Direct)': parseFloat(card['Flights (Direct)']) || 0,
+                'Flights (Portal)': parseFloat(card['Flights (Portal)']) || 0,
+                'Hotels (Direct)': parseFloat(card['Hotels (Direct)']) || 0,
+                'Hotels (Portal)': parseFloat(card['Hotels (Portal)']) || 0,
+                'Car Rent (Direct)': parseFloat(card['Car Rent (Direct)']) || 0,
+                'Car Rent (Portal)': parseFloat(card['Car Rent (Portal)']) || 0,
+                'Travel (Direct)': parseFloat(card['Travel (Direct)']) || 0,
+                'Travel (Portal)': parseFloat(card['Travel (Portal)']) || 0,
+                'Entertainment': parseFloat(card['Entertainment']) || 0,
+                'Streaming': parseFloat(card['Streaming']) || 0,
+                'Transport': parseFloat(card['Transport']) || 0,
+                'Online Shopping': parseFloat(card['Online Shopping']) || 0,
+                'Internet & Phone': parseFloat(card['Internet & Phone']) || 0,
+                'ADS Business': parseFloat(card['ADS Business']) || 0,
+                'Office supplies': parseFloat(card['Office supplies']) || 0
+            },
+            additionalDetails: {
+                cdw: card['CDW'] || '',
+                fxFee: card['FX Fee'] || '',
+                purchaseProtection: card['Purchase protection'] || '',
+                cellPhoneProtection: card['Cell phone protection'] || '',
+                otherDetails: card['Other details'] || ''
+            }
         };
+    });
+}
 
-        // Create skip hint element
-        this.elements.skipHint.className = 'skip-hint';
-        this.elements.skipHint.style.cssText = `
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1.6rem;
-            text-align: center;
-            pointer-events: none;
-            display: none;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-            letter-spacing: 1px;
+// Set up event listeners
+function setupEventListeners() {
+    // Card search
+    cardSearchInput.addEventListener('input', handleCardSearch);
+    
+    // Calculate button
+    calculateButton.addEventListener('click', calculateRewards);
+    
+    // Expense inputs
+    document.querySelectorAll('.expense-input').forEach(input => {
+        input.addEventListener('input', (e) => {
+            const category = e.target.dataset.category;
+            expenses[category] = parseFloat(e.target.value) || 0;
+        });
+    });
+    
+    // Modal close
+    closeModal.addEventListener('click', () => {
+        cardDetailsModal.style.display = 'none';
+    });
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+        if (e.target === cardDetailsModal) {
+            cardDetailsModal.style.display = 'none';
+        }
+    });
+}
+
+// Handle card search
+function handleCardSearch(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const filteredCards = allCards.filter(card => 
+        card.name.toLowerCase().includes(searchTerm) || 
+        card.issuer.toLowerCase().includes(searchTerm)
+    );
+    
+    renderAvailableCards(filteredCards);
+}
+
+// Render available cards
+function renderAvailableCards(cards) {
+    availableCardsList.innerHTML = '';
+    
+    if (cards.length === 0) {
+        availableCardsList.innerHTML = '<p>No cards found matching your search.</p>';
+        return;
+    }
+    
+    cards.forEach(card => {
+        // Skip if already selected
+        if (selectedCards.some(c => c.name === card.name)) {
+            return;
+        }
+        
+        const cardElement = document.createElement('div');
+        cardElement.classList.add('card-item');
+        
+        cardElement.innerHTML = `
+            <div class="card-item-details">
+                <div class="card-name">${card.name}</div>
+                <div class="card-issuer">${card.issuer}</div>
+            </div>
+            <button class="card-action-btn add-card-btn">Add</button>
         `;
-        this.elements.gameScreen.appendChild(this.elements.skipHint);
+        
+        cardElement.querySelector('.add-card-btn').addEventListener('click', () => {
+            addCard(card);
+        });
+        
+        availableCardsList.appendChild(cardElement);
+    });
+}
 
-        // Create timer element
-        this.elements.timer = document.createElement('div');
-        this.elements.timer.id = 'game-timer';
-        this.elements.timer.className = 'game-timer';
-        this.elements.gameScreen.appendChild(this.elements.timer);
-
-        // Create music control button
-        this.elements.musicButton.className = 'music-button';
-        this.elements.musicButton.innerHTML = '🔈';
-        this.elements.musicButton.style.cssText = `
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 40px;
-            height: 40px;
-            border: none;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            z-index: 1000;
-            display: none;
-            transition: all 0.3s ease;
+// Render selected cards
+function renderSelectedCards() {
+    selectedCardsList.innerHTML = '';
+    
+    if (selectedCards.length === 0) {
+        selectedCardsList.innerHTML = '<p>No cards selected yet. Add cards from the available list.</p>';
+        return;
+    }
+    
+    selectedCards.forEach(card => {
+        const cardElement = document.createElement('div');
+        cardElement.classList.add('card-item');
+        
+        cardElement.innerHTML = `
+            <div class="card-item-details">
+                <div class="card-name">${card.name}</div>
+                <div class="card-issuer">${card.issuer}</div>
+            </div>
+            <button class="card-action-btn remove-card-btn">Remove</button>
         `;
         
-        // Only show music button on desktop
-        if (!this.isTouchDevice) {
-            this.elements.musicButton.style.display = 'block';
-        }
-        document.body.appendChild(this.elements.musicButton);
-
-        // Event listeners
-        document.getElementById('start-button').addEventListener('click', () => {
-            this.startGame();
+        cardElement.querySelector('.remove-card-btn').addEventListener('click', () => {
+            removeCard(card);
         });
-        window.addEventListener('keydown', e => e.code === 'Space' && (e.preventDefault(), this.handleAction()));
-        this.elements.gameScreen.addEventListener('click', () => this.handleAction());
-        this.elements.backButton.addEventListener('click', () => this.goBack());
-        this.elements.musicButton.addEventListener('click', () => this.toggleMusic());
-
-        // Preload all background images
-        this.preloadBackgrounds();
-    }
-
-    preloadBackgrounds() {
-        const backgrounds = [
-            'sterile.png',
-            'office.png',
-            'freelancer.png',
-            'boss.png',
-            'broke.png',
-            'single.png',
-            'notsingle.png',
-            '1.png',
-            '2.png',
-            'social.png',
-            'black.png'
-        ];
-
-        const FINEBOTEmotions = [
-            'default',
-            'cringe',
-            'a',
-            'shock',
-            'smile',
-            'sus',
-            'up',
-            'error'
-        ];
-
-        // Preload backgrounds
-        backgrounds.forEach(bg => {
-            const img = new Image();
-            img.src = `assets/${bg}`;
-            this.imageCache.set(bg, img);
-        });
-
-        // Preload FINEBOT emotion sprites
-        FINEBOTEmotions.forEach(emotion => {
-            const img = new Image();
-            img.src = `assets/FINEBOT_${emotion}.png`;
-            this.imageCache.set(`FINEBOT_${emotion}`, img);
-        });
-    }
-
-    async transitionToScene(nextScene, useTransition = true) {
-        if (this.isTransitioning) return;
-        this.isTransitioning = true;
-
-        if (useTransition) {
-            this.elements.transitionOverlay.classList.add('dimming');
-            await new Promise(resolve => setTimeout(resolve, 800));
-        }
-
-        // Change scene
-        this.currentScene = nextScene;
-        this.dialogueIndex = 0;
-
-        // Set up new scene
-        await this.showNextDialogue();
         
-        // Remove dimming after scene is set up
-        this.elements.transitionOverlay.classList.remove('dimming');
-        this.isTransitioning = false;
-    }
+        selectedCardsList.appendChild(cardElement);
+    });
+}
 
-    handleAction() {
-        if (!this.gameStarted) {
-            this.startGame();
-            return;
-        }
-
-        const currentScene = gameData.scenes[this.currentScene];
-        if (!currentScene) return;
-
-        let dialogue;
-        if (typeof currentScene.dialogue === 'function') {
-            dialogue = currentScene.dialogue(this.playerChoices)[this.dialogueIndex];
-        } else {
-            dialogue = currentScene.dialogue[this.dialogueIndex];
-        }
-
-        if (!dialogue || dialogue.choices || dialogue.requiresInput) return;
-
-        if (this.isTyping) {
-            this.completeTyping();
-        } else {
-            this.nextDialogue();
-        }
-    }
-
-    nextDialogue() {
-        const currentScene = gameData.scenes[this.currentScene];
-        let dialogue;
-        
-        if (typeof currentScene.dialogue === 'function') {
-            const dialogueArray = currentScene.dialogue(this.playerChoices);
-            if (this.dialogueIndex < dialogueArray.length - 1) {
-                this.dialogueIndex++;
-                this.showNextDialogue();
-            } else if (dialogueArray[this.dialogueIndex].nextScene) {
-                const nextScene = dialogueArray[this.dialogueIndex].nextScene;
-                const useTransition = dialogueArray[this.dialogueIndex].transition !== false;
-                this.transitionToScene(nextScene, useTransition);
-            }
-        } else {
-            // Get current dialogue
-            const currentDialogue = currentScene.dialogue[this.dialogueIndex];
-            
-            // If current dialogue is a choice with a response function
-            if (currentDialogue.choices && typeof currentDialogue.text === 'function') {
-                // Show the response text
-                const responseText = currentDialogue.text(this.playerChoices);
-                this.elements.speaker.textContent = 'FINEBOT';
-                this.typeText(responseText);
-                
-                // Move to next dialogue after response is shown and clicked
-                const handleResponseClick = () => {
-                    this.elements.gameScreen.removeEventListener('click', handleResponseClick);
-                    if (this.dialogueIndex < currentScene.dialogue.length - 1) {
-                        this.dialogueIndex++;
-                        this.showNextDialogue();
-                    } else if (currentDialogue.nextScene) {
-                        const nextScene = currentDialogue.nextScene;
-                        const useTransition = currentDialogue.transition !== false;
-                        this.transitionToScene(nextScene, useTransition);
-                    }
-                };
-                
-                this.elements.gameScreen.addEventListener('click', handleResponseClick);
-            } else {
-                // Normal dialogue progression
-                if (this.dialogueIndex < currentScene.dialogue.length - 1) {
-                    this.dialogueIndex++;
-                    this.showNextDialogue();
-                } else if (currentDialogue.nextScene) {
-                    const nextScene = currentDialogue.nextScene;
-                    const useTransition = currentDialogue.transition !== false;
-                    if (typeof nextScene === 'function') {
-                        this.transitionToScene(nextScene(this.playerChoices), useTransition);
-                    } else {
-                        this.transitionToScene(nextScene, useTransition);
-                    }
-                }
-            }
-        }
-    }
-
-    startBackgroundMusic() {
-        this.backgroundMusic.play()
-            .then(() => {
-                this.isMusicPlaying = true;
-                this.elements.musicButton.innerHTML = '🔊';
-                console.log('Background music started successfully');
-            })
-            .catch(error => {
-                console.log('Failed to play background music:', error);
-                // Keep the button visible on desktop even if autoplay fails
-                if (!this.isTouchDevice) {
-                    this.elements.musicButton.style.display = 'block';
-                }
-            });
-    }
-
-    toggleMusic() {
-        if (this.isMusicPlaying) {
-            this.backgroundMusic.pause();
-            this.elements.musicButton.innerHTML = '🔈';
-            this.isMusicPlaying = false;
-        } else {
-            this.backgroundMusic.play()
-                .then(() => {
-                    this.elements.musicButton.innerHTML = '🔊';
-                    this.isMusicPlaying = true;
-                })
-                .catch(error => console.log('Failed to resume music:', error));
-        }
-    }
-
-    startGame() {
-        if (this.gameStarted) return;
-        this.gameStarted = true;
-        this.elements.startScreen.classList.remove('active');
-        this.elements.gameScreen.classList.add('active');
-        this.startBackgroundMusic();
-        this.showNextDialogue();
-    }
-
-    startTimer(duration) {
-        let timeLeft = duration;
-        this.elements.timer.style.display = 'block';
-        
-        this.timer = setInterval(() => {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            
-            this.elements.timer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            
-            if (--timeLeft < 0) {
-                clearInterval(this.timer);
-                this.elements.timer.style.display = 'none';
-                this.nextDialogue();
-            }
-        }, 1000);
-    }
-
-    showNextDialogue() {
-        const currentScene = gameData.scenes[this.currentScene];
-        if (!currentScene) return;
-
-        // Stop any currently playing voice when showing next dialogue
-        if (this.currentVoice) {
-            this.currentVoice.pause();
-            this.currentVoice = null;
-        }
-
-        let dialogue;
-        if (typeof currentScene.dialogue === 'function') {
-            dialogue = currentScene.dialogue(this.playerChoices)[this.dialogueIndex];
-        } else {
-            dialogue = currentScene.dialogue[this.dialogueIndex];
-        }
-        
-        if (!dialogue) return;
-
-        // Add skip condition check here
-        if (dialogue.condition && typeof dialogue.condition === 'function' && !dialogue.condition(this.playerChoices)) {
-            this.dialogueIndex++;
-            this.showNextDialogue();
-            return;
-        }
-
-        // Save current state to history
-        this.dialogueHistory.push({
-            scene: this.currentScene,
-            index: this.dialogueIndex,
-            choices: {...this.playerChoices}
-        });
-
-        // Limit history size to prevent memory issues
-        if (this.dialogueHistory.length > 50) {
-            this.dialogueHistory.shift();
-        }
-
-        // Show/hide skip hint based on scene
-        if (this.currentScene === 'intro') {
-            this.elements.skipHint.textContent = this.isTouchDevice ? 'Tap to skip' : 'Press space or click to skip';
-            this.elements.skipHint.style.display = 'block';
-        } else {
-            this.elements.skipHint.style.display = 'none';
-        }
-
-        // Start timer if it's a timed sequence
-        if (dialogue.isTimedSequence && dialogue.timerDuration) {
-            this.startTimer(dialogue.timerDuration);
-        }
-
-        // Stop timer if specified
-        if (dialogue.stopTimer) {
-            clearInterval(this.timer);
-            this.elements.timer.style.display = 'none';
-        }
-
-        // Handle background with transition if specified
-        const background = dialogue.background || currentScene.background;
-        if (background) {
-            let backgroundPath = background;
-            if (typeof background === 'function') {
-                backgroundPath = background(this.playerChoices);
-            }
-            
-            // Skip transition if the background isn't actually changing
-            const currentBg = this.elements.background.style.backgroundImage;
-            const newBg = `url('assets/${backgroundPath}')`;
-            if (currentBg === newBg) {
-                return;
-            }
-            
-            // If we're transitioning, force complete the previous transition
-            if (this.isTransitioning) {
-                this.elements.transitionOverlay.classList.remove('dimming');
-                this.isTransitioning = false;
-            }
-            
-            // Use cached image if available
-            const cachedImg = this.imageCache.get(backgroundPath);
-            if (cachedImg && cachedImg.complete) {
-                this.setBackgroundWithTransition(backgroundPath, dialogue.transition);
-            } else {
-                // Fallback to loading if not cached
-                const img = new Image();
-                img.onload = () => {
-                    this.imageCache.set(backgroundPath, img);
-                    this.setBackgroundWithTransition(backgroundPath, dialogue.transition);
-                };
-                img.src = `assets/${backgroundPath}`;
-            }
-        }
-
-        // Handle ARIA's sprite
-        if (dialogue.aria) {
-            this.elements.aria.style.backgroundImage = `url('assets/${dialogue.aria}')`;
-            this.elements.aria.style.display = 'block';
-        } else if (dialogue.speaker === 'FINEBOT' || (dialogue.isNarration && this.currentScene !== 'intro')) {
-            this.setFINEBOTSprite(dialogue.emotion);
-        } else {
-            this.elements.aria.style.display = 'none';
-        }
-
-        // Handle name input
-        if (dialogue.requiresInput) {
-            this.elements.speaker.textContent = dialogue.speaker;
-            this.elements.dialogueText.textContent = dialogue.text;
-            
-            // Show FINEBOT's sprite if he's the speaker
-            if (dialogue.speaker === 'FINEBOT') {
-                this.setFINEBOTSprite(dialogue.emotion);
-            } else {
-                this.elements.aria.style.display = 'none';
-            }
-            
-            // Create name input form
-            const nameForm = document.createElement('form');
-            nameForm.className = 'name-input-container';
-            nameForm.innerHTML = `
-                <input type="text" class="name-input" placeholder="" required>
-                <button type="submit" class="choice-button">Continue</button>
-            `;
-            
-            // Clear choices and append form to dialogue text
-            this.elements.choices.innerHTML = '';
-            this.elements.dialogueText.appendChild(nameForm);
-            
-            // Auto-focus the input field
-            nameForm.querySelector('.name-input').focus();
-            
-            // Handle form submission
-            nameForm.onsubmit = (e) => {
-                e.preventDefault();
-                const nameInput = nameForm.querySelector('.name-input');
-                if (dialogue.storeAs === 'userEmail') {
-                    this.playerChoices[dialogue.storeAs] = nameInput.value;
-                    this.nextDialogue();
-                } else {
-                    this.playerName = nameInput.value || 'Player';
-                    this.nextDialogue();
-                }
-            };
-            
-            return;
-        }
-
-        // Handle choices
-        if (dialogue.choices) {
-            this.elements.speaker.textContent = dialogue.speaker;
-            this.elements.dialogueText.textContent = dialogue.text.replace('[name]', this.playerName);
-            this.showChoices(dialogue.choices, dialogue.storeAs);
-            return;
-        }
-
-        // Clear any existing choices
-        this.elements.choices.innerHTML = '';
-
-        // Show dialogue
-        if ((dialogue.speaker === 'FINEBOT' || dialogue.isNarration) && this.currentScene !== 'intro') {
-            this.setFINEBOTSprite(dialogue.emotion);
-        } else {
-            this.elements.aria.style.display = 'none';
-        }
-
-        this.elements.speaker.textContent = dialogue.speaker || '';
-        if (dialogue.isNarration) {
-            // For narration, show text with typing effect and wait for user input
-            if (dialogue.text.includes('cyber-loading')) {
-                // For cyber-loading sequence, show immediately and auto-advance
-                this.elements.dialogueText.innerHTML = dialogue.text;
-                
-                setTimeout(() => {
-                    if (this.currentScene === 'finalMemory' && 
-                        this.dialogueIndex === this.dialogueHistory[this.dialogueHistory.length - 1].index) {
-                        this.nextDialogue();
-                    }
-                }, 7000); // Wait for all animations to complete (6s + buffer)
-            } else if (dialogue.text.includes('Screen glitches')) {
-                // Add 3 second delay before showing glitch text
-                this.elements.dialogueText.innerHTML = '';
-                setTimeout(() => {
-                    this.typeText(`<em>${dialogue.text.replace('[name]', this.playerName)}</em>`);
-                }, 3000);
-            } else {
-                this.typeText(`<em>${dialogue.text.replace('[name]', this.playerName)}</em>`);
-            }
-        } else {
-            // For regular dialogue, use typing animation
-            if (dialogue.voice) {
-                this.currentVoice = new Audio(dialogue.voice);
-                this.currentVoice.volume = 0.3; // Set voice volume to 20%
-                this.currentVoice.play();
-            }
-            this.typeText(dialogue.text.replace('[name]', this.playerName));
-        }
-    }
-
-    showChoices(choices, storeAs) {
-        console.log("Current dialogue index:", this.dialogueIndex);
-        
-        // Get the current dialogue entry
-        const currentScene = gameData.scenes[this.currentScene];
-        const dialogue = currentScene.dialogue[this.dialogueIndex];
-        
-        // Never show FINEBOT in intro scene
-        if (this.currentScene !== 'intro') {
-            const currentScene = gameData.scenes[this.currentScene];
-            const dialogue = currentScene.dialogue[this.dialogueIndex];
-            this.setFINEBOTSprite(dialogue.emotion);
-        } else {
-            this.elements.aria.style.display = 'none';
-        }
-        
-        // Create container for selected choices if this is a multi-choice question
-        const isMultiChoice = dialogue.isMultiChoice || false;
-        const selectedChoices = new Set();
-        
-        // Create choice buttons
-        this.elements.choices.innerHTML = choices
-            .map(choice => {
-                const choiceText = typeof choice === 'string' ? choice : choice.text;
-                return `<button class="choice-button" data-exclusive="${choice.isExclusive || false}">${choiceText}</button>`;
-            })
-            .join('');
-            
-        // Add done button for multi-choice
-        if (isMultiChoice) {
-            const doneButton = document.createElement('button');
-            doneButton.className = 'choice-button done-button';
-            doneButton.textContent = dialogue.doneButtonText || "Done";
-            doneButton.style.display = 'none';
-            this.elements.choices.appendChild(doneButton);
-            
-            // Handle done button click
-            doneButton.onclick = () => {
-                if (selectedChoices.size > 0) {
-                    if (storeAs) {
-                        this.playerChoices[storeAs] = Array.from(selectedChoices);
-                    }
-                    
-                    this.elements.choices.innerHTML = '';
-                    
-                    // Get the next dialogue entry which contains the response function
-                    const nextDialogue = currentScene.dialogue[this.dialogueIndex + 1];
-                    if (nextDialogue && typeof nextDialogue.text === 'function') {
-                        const response = nextDialogue.text(this.playerChoices);
-                        this.elements.speaker.textContent = 'FINEBOT';
-                        this.elements.dialogueText.textContent = '';
-                        this.typeText(response);
-                        
-                        const handleResponseClick = () => {
-                            this.elements.gameScreen.removeEventListener('click', handleResponseClick);
-                            this.nextDialogue();
-                        };
-                        
-                        this.elements.gameScreen.addEventListener('click', handleResponseClick);
-                    } else {
-                        this.nextDialogue();
-                    }
-                }
-            };
-        }
-
-        // Handle choice button clicks
-        this.elements.choices.querySelectorAll('.choice-button:not(.done-button)').forEach((button, index) => {
-            button.onclick = () => {
-                const choice = choices[index];
-                const choiceText = typeof choice === 'string' ? choice : choice.text;
-                const isExclusive = choice.isExclusive || false;
-                
-                if (isMultiChoice) {
-                    // Handle exclusive choice (like 'No investments')
-                    if (isExclusive) {
-                        selectedChoices.clear();
-                        this.elements.choices.querySelectorAll('.choice-button:not(.done-button)').forEach(btn => {
-                            btn.classList.remove('selected');
-                        });
-                    } else {
-                        // Remove exclusive choices when selecting non-exclusive ones
-                        selectedChoices.forEach(selected => {
-                            const selectedChoice = choices.find(c => c.text === selected);
-                            if (selectedChoice && selectedChoice.isExclusive) {
-                                selectedChoices.delete(selected);
-                                this.elements.choices.querySelectorAll('.choice-button').forEach(btn => {
-                                    if (btn.textContent === selected) {
-                                        btn.classList.remove('selected');
-                                    }
-                                });
-                            }
-                        });
-                    }
-                    
-                    // Toggle selection
-                    if (selectedChoices.has(choiceText)) {
-                        selectedChoices.delete(choiceText);
-                        button.classList.remove('selected');
-                    } else {
-                        selectedChoices.add(choiceText);
-                        button.classList.add('selected');
-                    }
-                    
-                    // Show/hide done button based on selections
-                    const doneButton = this.elements.choices.querySelector('.done-button');
-                    if (doneButton) {
-                        doneButton.style.display = selectedChoices.size > 0 ? 'block' : 'none';
-                    }
-                } else {
-                    // Single choice handling
-                    if (storeAs) {
-                        this.playerChoices[storeAs] = choiceText;
-                    }
-                    
-                    this.elements.choices.innerHTML = '';
-                    
-                    if (choice.response) {
-                        this.elements.speaker.textContent = 'FINEBOT';
-                        this.typeText(choice.response);
-                        
-                        const handleResponseClick = () => {
-                            this.elements.gameScreen.removeEventListener('click', handleResponseClick);
-                            this.nextDialogue();
-                        };
-                        
-                        this.elements.gameScreen.addEventListener('click', handleResponseClick);
-                    } else {
-                        this.nextDialogue();
-                    }
-                }
-            };
-        });
-    }
-
-    typeText(text) {
-        return new Promise((resolve) => {
-            this.isTyping = true;
-            this.elements.dialogueText.innerHTML = '';
-            let index = 0;
-            
-            // For narration text, wrap in em tags after typing is complete
-            const isNarration = text.includes('<em>');
-            const cleanText = isNarration ? text.replace('<em>', '').replace('</em>', '') : text;
-            
-            // Add FINEBOT's name if he's the speaker
-            const isFINEBOT = this.elements.speaker.textContent === 'FINEBOT';
-            const FINEBOTPrefix = isFINEBOT ? '<span class="speaker-name">FINEBOT</span>' : '';
-            
-            // Create a temporary div to parse HTML
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = cleanText;
-            const textContent = tempDiv.textContent;
-            
-            // Add FINEBOT's name before starting the typing animation
-            if (isFINEBOT) {
-                this.elements.dialogueText.innerHTML = FINEBOTPrefix;
-            }
-            
-            const type = () => {
-                if (!this.isTyping) {
-                    this.completeTyping(text);
-                    resolve();
-                    return;
-                }
-                if (index < textContent.length) {
-                    const displayText = textContent.slice(0, index + 1);
-                    this.elements.dialogueText.innerHTML = isNarration ? 
-                        `<em>${displayText}</em>` : 
-                        `${FINEBOTPrefix}${displayText}`;
-                    
-                    index++;
-                    setTimeout(type, 13); // Reduced delay for faster typing speed
-                } else {
-                    this.isTyping = false;
-                    resolve();
-                }
-            };
-            type();
-        });
-    }
-
-    completeTyping(text) {
-        this.isTyping = false;
-        // Stop any currently playing voice when completing typing
-        if (this.currentVoice) {
-            this.currentVoice.pause();
-            this.currentVoice = null;
-        }
-        const currentDialogue = gameData.scenes[this.currentScene].dialogue[this.dialogueIndex];
-        
-        if (!text) {
-            text = currentDialogue.text;
-        }
-        
-        // Handle colored text while preserving HTML
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = text;
-        let displayText = tempDiv.innerHTML;
-        
-        // Add FINEBOT's name if he's the speaker
-        const isFINEBOT = this.elements.speaker.textContent === 'FINEBOT';
-        const FINEBOTPrefix = isFINEBOT ? '<span class="speaker-name">FINEBOT</span>' : '';
-        
-        // Handle narration text
-        if (currentDialogue.isNarration || text.includes('<em>')) {
-            displayText = displayText.includes('<em>') ? displayText : `<em>${displayText}</em>`;
-        }
-        
-        this.elements.dialogueText.innerHTML = `${FINEBOTPrefix}${displayText}`.replace('[name]', this.playerName);
-    }
-
-    goBack() {
-        if (this.dialogueHistory.length <= 1) return; // Need at least 2 entries to go back
-        
-        // Remove current state
-        this.dialogueHistory.pop();
-        // Get previous state
-        const previousState = this.dialogueHistory[this.dialogueHistory.length - 1];
-        
-        // Restore previous state
-        this.currentScene = previousState.scene;
-        this.dialogueIndex = previousState.index;
-        
-        // Handle background
-        const currentScene = gameData.scenes[this.currentScene];
-        if (currentScene.background) {
-            if (typeof currentScene.background === 'function') {
-                this.elements.background.style.backgroundImage = `url('assets/${currentScene.background(this.playerChoices)}')`;
-            } else {
-                this.elements.background.style.backgroundImage = `url('assets/${currentScene.background}')`;
-            }
-        }
-
-        // Show the dialogue without adding to history
-        const dialogue = typeof currentScene.dialogue === 'function' 
-            ? currentScene.dialogue(this.playerChoices)[this.dialogueIndex]
-            : currentScene.dialogue[this.dialogueIndex];
-
-        // Handle ARIA's sprite
-        if (dialogue.aria) {
-            this.elements.aria.style.backgroundImage = `url('assets/${dialogue.aria}')`;
-            this.elements.aria.style.display = 'block';
-        } else if (dialogue.speaker === 'FINEBOT' || (dialogue.isNarration && this.currentScene !== 'intro')) {
-            this.setFINEBOTSprite(dialogue.emotion);
-        } else {
-            this.elements.aria.style.display = 'none';
-        }
-
-        // Show dialogue text
-        this.elements.speaker.textContent = dialogue.speaker || '';
-        if (dialogue.isNarration) {
-            this.typeText(`<em>${dialogue.text.replace('[name]', this.playerName)}</em>`);
-        } else {
-            this.typeText(dialogue.text.replace('[name]', this.playerName));
-        }
-
-        // Handle choices if present
-        if (dialogue.choices) {
-            this.showChoices(dialogue.choices, dialogue.storeAs);
-        } else {
-            this.elements.choices.innerHTML = '';
-        }
-    }
-
-    setBackgroundWithTransition(backgroundPath, shouldTransition) {
-        const newBg = `url('assets/${backgroundPath}')`;
-        
-        if (shouldTransition) {
-            this.elements.transitionOverlay.classList.add('dimming');
-            this.isTransitioning = true;
-            
-            setTimeout(() => {
-                this.elements.background.style.backgroundImage = newBg;
-                this.elements.background.style.opacity = '1';
-                this.elements.transitionOverlay.classList.remove('dimming');
-                this.isTransitioning = false;
-            }, 300); // Reduced from 800ms to 300ms for faster transitions
-        } else {
-            this.elements.background.style.backgroundImage = newBg;
-            this.elements.background.style.opacity = '1';
-        }
-    }
-
-    setFINEBOTSprite(emotion = 'default') {
-        const cachedImg = this.imageCache.get(`FINEBOT_${emotion}`);
-        if (cachedImg && cachedImg.complete) {
-            this.elements.aria.style.backgroundImage = `url('assets/FINEBOT_${emotion}.png')`;
-            this.elements.aria.style.display = 'block';
-        } else {
-            // Fallback to loading if not cached
-            const img = new Image();
-            img.onload = () => {
-                this.imageCache.set(`FINEBOT_${emotion}`, img);
-                this.elements.aria.style.backgroundImage = `url('assets/FINEBOT_${emotion}.png')`;
-                this.elements.aria.style.display = 'block';
-            };
-            img.src = `assets/FINEBOT_${emotion}.png`;
-        }
+// Add a card to selected cards
+function addCard(card) {
+    if (!selectedCards.some(c => c.name === card.name)) {
+        selectedCards.push(card);
+        renderSelectedCards();
+        renderAvailableCards(allCards.filter(c => 
+            c.name.toLowerCase().includes(cardSearchInput.value.toLowerCase()) || 
+            c.issuer.toLowerCase().includes(cardSearchInput.value.toLowerCase())
+        ));
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => window.game = new MemoryBank());
+// Remove a card from selected cards
+function removeCard(card) {
+    selectedCards = selectedCards.filter(c => c.name !== card.name);
+    renderSelectedCards();
+    renderAvailableCards(allCards.filter(c => 
+        c.name.toLowerCase().includes(cardSearchInput.value.toLowerCase()) || 
+        c.issuer.toLowerCase().includes(cardSearchInput.value.toLowerCase())
+    ));
+}
+
+// Calculate rewards based on spending and selected cards
+function calculateRewards() {
+    if (selectedCards.length === 0) {
+        alert('Please select at least one credit card');
+        return;
+    }
+    
+    // Get expenses from inputs
+    const expenseInputs = document.querySelectorAll('.expense-input');
+    expenseInputs.forEach(input => {
+        const category = input.dataset.category;
+        expenses[category] = parseFloat(input.value) || 0;
+    });
+    
+    // Initialize results
+    const optimalSetup = {};
+    const cardProfits = {};
+    
+    // Initialize card profits with negative annual fees
+    selectedCards.forEach(card => {
+        cardProfits[card.name] = -card.annualFee;
+    });
+    
+    // For each expense category
+    Object.keys(expenses).forEach(category => {
+        const expenseAmount = expenses[category];
+        
+        if (expenseAmount > 0) {
+            let bestCard = null;
+            let bestReward = 0;
+            
+            // Find best card for this category
+            selectedCards.forEach(card => {
+                const rewardPercentage = card.rewards[category] || 0;
+                // Consider the point value
+                const effectiveReward = rewardPercentage * card.pointsValue;
+                
+                if (effectiveReward > bestReward) {
+                    bestReward = effectiveReward;
+                    bestCard = card;
+                }
+            });
+            
+            if (bestCard) {
+                // Annual value = monthly expense * 12 * reward rate * point value
+                const annualValue = expenseAmount * 12 * (bestCard.rewards[category] / 100) * bestCard.pointsValue;
+                
+                optimalSetup[category] = {
+                    cardName: bestCard.name,
+                    rewardPercentage: bestCard.rewards[category],
+                    pointsValue: bestCard.pointsValue,
+                    expenseAmount: expenseAmount,
+                    monthlyValue: expenseAmount * (bestCard.rewards[category] / 100) * bestCard.pointsValue,
+                    annualValue: annualValue
+                };
+                
+                // Add profit to card's total
+                cardProfits[bestCard.name] += annualValue;
+                
+                // Update the UI to show the best card for this category
+                updateCategoryRow(category, bestCard, optimalSetup[category]);
+            }
+        }
+    });
+    
+    // Calculate total profits
+    const totalProfit = Object.values(cardProfits).reduce((sum, profit) => sum + profit, 0);
+    
+    // Prepare card value summary
+    const cardSummary = selectedCards.map(card => {
+        const profit = cardProfits[card.name] || 0;
+        const perksValue = estimatePerksValue(card);
+        
+        return {
+            name: card.name,
+            annualFee: card.annualFee,
+            cashbackEarned: profit + card.annualFee, // Add back annual fee to get just rewards
+            netProfit: profit,
+            perksValue: perksValue,
+            totalValue: profit + perksValue,
+            keepCard: (profit + perksValue) > 0,
+            details: card.additionalDetails
+        };
+    });
+    
+    // Display results
+    displayResults(totalProfit, cardSummary);
+}
+
+// Estimate the value of card perks
+function estimatePerksValue(card) {
+    // This is a simplified estimation - in a real app, you would have more detailed data
+    let perksValue = 0;
+    
+    // Check for valuable perks and assign estimated values
+    if (card.additionalDetails.cdw === 'Yes') perksValue += 75;
+    if (card.additionalDetails.fxFee === 'No') perksValue += 50;
+    if (card.additionalDetails.purchaseProtection === 'Yes') perksValue += 50;
+    if (card.additionalDetails.cellPhoneProtection === 'Yes') perksValue += 100;
+    
+    // Check other details for common valuable perks
+    const otherDetails = card.additionalDetails.otherDetails.toLowerCase();
+    if (otherDetails.includes('travel credit')) perksValue += 300;
+    if (otherDetails.includes('airport lounge')) perksValue += 200;
+    if (otherDetails.includes('tsa precheck') || otherDetails.includes('global entry')) perksValue += 85;
+    if (otherDetails.includes('free night')) perksValue += 200;
+    if (otherDetails.includes('priority boarding')) perksValue += 75;
+    if (otherDetails.includes('free checked bag')) perksValue += 120;
+    
+    return perksValue;
+}
+
+// Update a category row in the expense table
+function updateCategoryRow(category, card, result) {
+    const rows = document.querySelectorAll('#expense-table tbody tr');
+    let targetRow;
+    
+    for (const row of rows) {
+        const inputElement = row.querySelector('.expense-input');
+        if (inputElement && inputElement.dataset.category === category) {
+            targetRow = row;
+            break;
+        }
+    }
+    
+    if (targetRow) {
+        const bestCardCell = targetRow.querySelector('.best-card');
+        const rewardsRateCell = targetRow.querySelector('.rewards-rate');
+        const monthlyValueCell = targetRow.querySelector('.monthly-value');
+        
+        bestCardCell.textContent = card.name;
+        rewardsRateCell.textContent = `${card.rewards[category]}% (${card.pointsValue}¢ per point)`;
+        monthlyValueCell.textContent = `${result.monthlyValue.toFixed(2)}`;
+    }
+}
