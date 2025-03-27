@@ -3,69 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE MEMORY BANK</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
+    <title>American Credit Card Calculator</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="game-container">
-        <!-- Start Screen -->
-        <div id="start-screen" class="screen active">
-            <div class="title-container">
-                <h1 class="game-title">THE MEMORY BANK</h1>
-                <button id="start-button" class="neo-button">BEGIN NEURAL REBOOT</button>
-                <p class="skip-hint">Press SPACE or click to skip</p>
-            </div>
-        </div>
+    <div class="container">
+        <header>
+            <h1>American Credit Card Calculator</h1>
+            <p>Find out which cards maximize your rewards based on your spending</p>
+        </header>
 
-        <!-- Main Game Screen -->
-        <div id="game-screen" class="screen">
-            <!-- Background Layer -->
-            <div id="background"></div>
-            <div id="transition-overlay"></div>
-            
-            <!-- Holographic Brain Layer -->
-            <div id="brain-container" class="brain-container">
-                <div class="container">
-                    <div class="brain"></div>
+        <main>
+            <section id="card-selection" class="section">
+                <h2>Step 1: Select Your Credit Cards</h2>
+                <div class="card-search">
+                    <input type="text" id="card-search-input" placeholder="Search for cards...">
                 </div>
-            </div>
-            
-            <!-- Main Content Layer -->
-            <div id="content-layer">
-                <!-- Status Display -->
-                <div id="status-display">
-                </div>
-
-                <!-- Back Button -->
-                <button id="back-button" class="neo-button">← Back</button>
-
-                <!-- Dialogue System -->
-                <div id="dialogue-system">
-                    <!-- Character Layer -->
-                    <div id="aria-sprite"></div>
-                    
-                    <div id="dialogue-box">
-                        <div id="speaker"></div>
-                        <div id="dialogue-text"></div>
+                <div class="card-selection-container">
+                    <div class="available-cards">
+                        <h3>Available Cards</h3>
+                        <div id="available-cards-list" class="cards-list"></div>
                     </div>
-                    
-                    <!-- Choices Container -->
-                    <div id="choices-container"></div>
+                    <div class="selected-cards">
+                        <h3>Your Selected Cards</h3>
+                        <div id="selected-cards-list" class="cards-list"></div>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </section>
 
-        <!-- Memory Flash Screen -->
-        <div id="memory-flash" class="screen">
-            <div id="memory-content"></div>
+            <section id="expense-entry" class="section">
+                <h2>Step 2: Enter Your Monthly Expenses</h2>
+                <div class="expense-form">
+                    <table id="expense-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Monthly Spend ($)</th>
+                                <th>Best Card</th>
+                                <th>Rewards Rate</th>
+                                <th>Monthly Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Categories from CSV -->
+                            <tr>
+                                <td>All Purchases</td>
+                                <td><input type="number" class="expense-input" data-category="Rewards on all purchases" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Groceries</td>
+                                <td><input type="number" class="expense-input" data-category="Groceries" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Dining</td>
+                                <td><input type="number" class="expense-input" data-category="Dining" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Gas</td>
+                                <td><input type="number" class="expense-input" data-category="Gas" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Flights (Direct)</td>
+                                <td><input type="number" class="expense-input" data-category="Flights (Direct)" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Flights (Portal)</td>
+                                <td><input type="number" class="expense-input" data-category="Flights (Portal)" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Hotels (Direct)</td>
+                                <td><input type="number" class="expense-input" data-category="Hotels (Direct)" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Hotels (Portal)</td>
+                                <td><input type="number" class="expense-input" data-category="Hotels (Portal)" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Car Rental (Direct)</td>
+                                <td><input type="number" class="expense-input" data-category="Car Rent (Direct)" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Car Rental (Portal)</td>
+                                <td><input type="number" class="expense-input" data-category="Car Rent (Portal)" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Travel (Direct)</td>
+                                <td><input type="number" class="expense-input" data-category="Travel (Direct)" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Travel (Portal)</td>
+                                <td><input type="number" class="expense-input" data-category="Travel (Portal)" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Entertainment</td>
+                                <td><input type="number" class="expense-input" data-category="Entertainment" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Streaming</td>
+                                <td><input type="number" class="expense-input" data-category="Streaming" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Transport</td>
+                                <td><input type="number" class="expense-input" data-category="Transport" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Online Shopping</td>
+                                <td><input type="number" class="expense-input" data-category="Online Shopping" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Internet & Phone</td>
+                                <td><input type="number" class="expense-input" data-category="Internet & Phone" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>ADS Business</td>
+                                <td><input type="number" class="expense-input" data-category="ADS Business" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                            <tr>
+                                <td>Office Supplies</td>
+                                <td><input type="number" class="expense-input" data-category="Office supplies" min="0"></td>
+                                <td class="best-card">-</td>
+                                <td class="rewards-rate">-</td>
+                                <td class="monthly-value">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button id="calculate-button" class="button">Calculate Rewards</button>
+            </section>
+
+            <section id="results" class="section hidden">
+                <h2>Results: Your Credit Card Optimization</h2>
+                <div class="results-summary">
+                    <h3>Total Annual Rewards Value: <span id="total-rewards-value">$0.00</span></h3>
+                </div>
+                <div class="card-value-summary">
+                    <h3>Card Value Analysis</h3>
+                    <table id="card-value-table">
+                        <thead>
+                            <tr>
+                                <th>Card</th>
+                                <th>Annual Fee</th>
+                                <th>Annual Rewards</th>
+                                <th>Net Value</th>
+                                <th>Additional Perks</th>
+                                <th>Recommendation</th>
+                            </tr>
+                        </thead>
+                        <tbody id="card-value-body">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- Modal for card details -->
+        <div id="card-details-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2 id="modal-card-name"></h2>
+                <div id="modal-card-details"></div>
+            </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="gameData.js"></script>
+    <!-- Include PapaParse for CSV parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
